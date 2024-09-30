@@ -15,13 +15,37 @@ namespace ShopTARge23.ApplicationServices.Services
     public class SpaceshipsServices : ISpaceshipsServices
     {
         private readonly ShopTARge23Context _context;
+        private readonly IFileServices _fileServices;
 
         public SpaceshipsServices
             (
-            ShopTARge23Context context
+            ShopTARge23Context context,
+            IFileServices = fileServices
             )
         {
             _context = context;
+        }
+
+        public async Task<Spaceship> Create(SpaceshipDto dto)
+        {
+            Spaceship spaceship = new Spaceship();
+
+            spaceship.Id = Guid.NewGuid();
+            spaceship.Name = dto.Name;
+            spaceship.Typename = dto.Typename;
+            spaceship.SpaceshipModel = dto.SpaceshipModel;
+            spaceship.Crew = dto.Crew;
+            spaceship.EnginePower = dto.EnginePower;
+            spaceship.BuiltDate = dto.BuiltDate;
+            spaceship.CreatedAt = DateTime.Now;
+            spaceship.ModifiedAt = DateTime.Now;
+            _fileServices.FilesToApi(dto, spaceship);
+
+            await _context.Spaceships.AddAsync(spaceship);
+            await _context.SaveChangesAsync();
+
+            return spaceship;
+
         }
 
         public async Task<Spaceship> DetailAsync(Guid id)
@@ -35,14 +59,14 @@ namespace ShopTARge23.ApplicationServices.Services
         {
             Spaceship domain = new();
 
-            domain.Id = dto.Id;
+            domain.Id = (Guid)dto.Id;
             domain.Name = dto.Name;
             domain.Typename = dto.Typename;
             domain.SpaceshipModel = dto.SpaceshipModel;
             domain.Crew = dto.Crew;
             domain.EnginePower = dto.EnginePower;
             domain.BuiltDate = dto.BuiltDate;
-            domain.CreatedAt = dto.CreatedAt;
+            domain.CreatedAt = DateTime.Now;
             domain.ModifiedAt = DateTime.Now;
 
             _context.Spaceships.Update(domain);
