@@ -8,20 +8,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace ShopTARge23.ApplicationServices.Services
 {
     public class RealEstatesServices : IRealEstatesServices
     {
         private readonly ShopTARge23Context _context;
+        private readonly IFileServices _fileServices;
 
         public RealEstatesServices
         (
-        ShopTARge23Context context
+        ShopTARge23Context context,
+        IFileServices fileServices
         )
         {
             _context = context;
-           
+            _fileServices = fileServices;
+
         }
         public async Task<RealEstate> Create(RealEstateDto dto)
         {
@@ -34,6 +38,11 @@ namespace ShopTARge23.ApplicationServices.Services
             realEstate.BuildingType = dto.BuildingType;
             realEstate.CreatedAt = DateTime.Now;
             realEstate.ModifiedAt = DateTime.Now;
+
+            if (dto.Files != null)
+            {
+                _fileServices.UploadFilesToDatabase(dto, realEstate);
+            }
 
             await _context.RealEstates.AddAsync(realEstate);
             await _context.SaveChangesAsync();
@@ -61,7 +70,11 @@ namespace ShopTARge23.ApplicationServices.Services
             domain.BuildingType = dto.BuildingType;
             domain.CreatedAt = dto.CreatedAt;
             domain.ModifiedAt = DateTime.Now;
-           
+
+            if (dto.Files != null)
+            {
+                
+            }
 
             _context.RealEstates.Update(domain);
             await _context.SaveChangesAsync();
