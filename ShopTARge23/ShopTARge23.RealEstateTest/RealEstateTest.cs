@@ -1,4 +1,5 @@
-using ShopTARge23.Core.Dto; 
+using ShopTARge23.Core.Dto;
+using ShopTARge23.Core.ServiceInterface;
 
 namespace ShopTARge23.RealEstateTest
 {
@@ -12,13 +13,13 @@ namespace ShopTARge23.RealEstateTest
 
             dto.Size = 100;
             dto.Location = "asd";
-            dto.Roomnumber = 1;
-            dto.BuildngType = "asd";
+            dto.RoomNumber = 1;
+            dto.BuildingType = "asd";
             dto.CreatedAt = DateTime.Now;
             dto.ModifiedAt = DateTime.Now;
 
             //Act
-            var result = await Svc<IrealEstateServices>().Create(dto);
+            var result = await Svc<IRealEstatesServices>().Create(dto);
 
             //Assert
             Assert.NotNull(result);
