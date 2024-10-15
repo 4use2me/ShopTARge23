@@ -93,6 +93,5 @@ namespace ShopTARge23.ApplicationServices.Services
 
             return spaceship;
         }
-
     }
 }
