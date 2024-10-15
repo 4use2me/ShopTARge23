@@ -60,7 +60,7 @@ namespace ShopTARge23.ApplicationServices.Services
 
         public async Task<List<FileToApi>> RemoveImagesFromApi(FileToApiDto[] dtos)
         {
-            foreach(var dto in dtos)
+            foreach (var dto in dtos)
             {
                 var imageId = await _context.FileToApis
                     .FirstOrDefaultAsync(x => x.ExistingFilePath == dto.ExistingFilePath);
@@ -80,15 +80,35 @@ namespace ShopTARge23.ApplicationServices.Services
             return null;
         }
 
+        public async Task<FileToApi> RemoveImageFromApi(FileToApiDto dto)
+        {
+            var imageId = await _context.FileToApis
+                .FirstOrDefaultAsync(x => x.Id == dto.Id);
+
+            var filePath = _webHost.ContentRootPath + "\\multipleFileUpload\\" + imageId.ExistingFilePath;
+
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
+            _context.FileToApis.Remove(imageId);
+            await _context.SaveChangesAsync();
+
+            return null;
+        }
+
         public void UploadFilesToDatabase(RealEstateDto dto, RealEstate domain)
         {
+
             if (dto.Files != null && dto.Files.Count > 0)
             {
+
                 foreach (var image in dto.Files)
                 {
                     using (var target = new MemoryStream())
                     {
-                        FileToDatabases files = new FileToDatabases()
+                        FileToDatabase files = new FileToDatabase()
                         {
                             Id = Guid.NewGuid(),
                             ImageTitle = image.FileName,
@@ -99,10 +119,41 @@ namespace ShopTARge23.ApplicationServices.Services
                         files.ImageData = target.ToArray();
 
                         _context.FileToDatabases.Add(files);
-                        //_context.SaveChangesAsync();
                     }
                 }
             }
+        }
+
+        public async Task<FileToDatabase> RemoveFileFromDatabase(FileToDatabaseDto dto)
+        {
+            var imageId = await _context.FileToDatabases
+                .Where(x => x.Id == dto.Id)
+                .FirstOrDefaultAsync();
+
+
+            _context.FileToDatabases.Remove(imageId);
+            await _context.SaveChangesAsync();
+
+
+            return imageId;
+        }
+
+        public async Task<FileToDatabase> RemoveFilesFromDatabase(FileToDatabaseDto[] dtos)
+        {
+            foreach (var dto in dtos)
+            {
+                var imageId = await _context.FileToDatabases
+                .Where(x => x.Id == dto.Id)
+                .FirstOrDefaultAsync();
+
+
+                _context.FileToDatabases.Remove(imageId);
+                await _context.SaveChangesAsync();
+            }
+
+
+
+            return null;
         }
     }
 }

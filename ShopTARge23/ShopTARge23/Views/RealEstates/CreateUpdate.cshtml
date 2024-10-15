@@ -56,7 +56,16 @@ else
                 </div>
             </div>
         </div>
+        <hr />
 
+        <div>
+            @foreach (var images in Model.Image)
+            {
+                <partial name="_Images" model="images" />
+                <input asp-action="removeImage" asp-controller="realestates" asp-route-imageId="@images.ImageId" type="submit"
+                       class="btn btn-danger" value="Remove Image" />
+            }
+        </div>
         <hr />
 
         @if (Model.Id.HasValue)
@@ -70,3 +79,21 @@ else
         <a asp-action="Index" asp-controller="realEstates" class="btn btn-outline-dark">Back</a>
     </form>
 </div>
+
+@* @section Scripts
+ {
+    <script>
+        $(document).ready(function () {
+                            $('.custom-file-input').on("change", function () {
+                                var fileLabel = $(this).next('.custom-file-input');
+                                var files = $(this)[0].files;
+                                if (files.length > 1) {
+                                    fileLabel.html(files.length + ' files selected');
+                                }
+                                else if (files.length == 1) {
+                                    fileLabel.html(files[0].name);
+                                }
+                            });
+        });
+     </script>
+} *@

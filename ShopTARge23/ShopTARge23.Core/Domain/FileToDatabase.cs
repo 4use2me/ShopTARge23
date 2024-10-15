@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ShopTARge23.Core.Domain
 {
-    public class FileToDatabases
+    public class FileToDatabase
     {
         public Guid Id { get; set; }
         public string ImageTitle { get; set; }

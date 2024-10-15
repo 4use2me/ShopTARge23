@@ -2,7 +2,6 @@
 using ShopTARge23.Core.ServiceInterface;
 using ShopTARge23.Data;
 using ShopTARge23.Models.Kindergartens;
-using ShopTARge23.Data;
 using ShopTARge23.Core.Dto;
 
 namespace ShopTARge23.Controllers
