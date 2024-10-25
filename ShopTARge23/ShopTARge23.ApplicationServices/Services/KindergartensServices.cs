@@ -30,6 +30,11 @@ namespace ShopTARge23.ApplicationServices.Services
             kindergarten.Id = Guid.NewGuid();
             kindergarten.GroupName = dto.GroupName;
             kindergarten.ChildrenCount = dto.ChildrenCount;
+            if (dto.ChildrenCount == 0)
+            {
+                // Kui `ChildrenCount` on 0, tagasta null või viska erand
+                return null;
+            }
             kindergarten.KindergartenName = dto.KindergartenName;
             kindergarten.Teacher = dto.Teacher;
             kindergarten.CreatedAt = DateTime.Now;
