@@ -4,6 +4,10 @@ using ShopTARge23.Data;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using ShopTARge23.ApplicationServices.Services;
 using ShopTARge23.Core.Domain;
+using Moq;
+using System.Text;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace ShopTARge23.RealEstateTest
 {
@@ -48,7 +52,7 @@ namespace ShopTARge23.RealEstateTest
         public async Task Should_GetByIdRealestate_WhenReturnsEqual() //vastupidine test vıreldes eelmisega
         {
             //Arrange
-            Guid correctGuid = Guid.Parse("47d296b4-fac8-4834-9e0a-5ebc1bdbcc16"); 
+            Guid correctGuid = Guid.Parse("47d296b4-fac8-4834-9e0a-5ebc1bdbcc16");
             Guid guid = Guid.Parse("47d296b4-fac8-4834-9e0a-5ebc1bdbcc16");
 
             //Act
@@ -83,6 +87,76 @@ namespace ShopTARge23.RealEstateTest
             Assert.NotEqual(result.Id, realEstate1.Id);
         }
 
+        [Fact]
+        public async Task Should_UpdateRealEstate_WhenUpdateData()
+        {
+            var guid = Guid.Parse("47d296b4-fac8-4834-9e0a-5ebc1bdbcc16");
+
+            //uued andmed
+            RealEstateDto dto = MockRealEstateData();
+
+            //andmebaasis olevad andmed
+            RealEstate domain = new();
+
+            domain.Id = Guid.Parse("47d296b4-fac8-4834-9e0a-5ebc1bdbcc16");
+            domain.Location = "asdasd";
+            domain.Size = 34;
+            domain.RoomNumber = 1234;
+            domain.BuildingType = "asd";
+            domain.CreatedAt = DateTime.UtcNow;
+            domain.ModifiedAt = DateTime.UtcNow;
+
+            await Svc<IRealEstatesServices>().Update(dto);
+
+            Assert.Equal(domain.Id, guid);
+            Assert.DoesNotMatch(domain.Location, dto.Location);
+            Assert.DoesNotMatch(domain.RoomNumber.ToString(), dto.RoomNumber.ToString()); //kasutades notequal ei pea teisendama stringiks
+            Assert.NotEqual(domain.Size, dto.Size);
+            Assert.Matches(domain.BuildingType, dto.BuildingType);
+        }
+
+        [Fact]
+        public async Task Should_UpdateRealEstate_WhenUpdateDataVersion2()
+        {
+            //kasutame kahte mock andmebaasi ja siis vırdleme omavahel
+
+            RealEstateDto dto = MockRealEstateData();
+            var createRealEstate = await Svc<IRealEstatesServices>().Create(dto);
+
+            RealEstateDto update = MockUpdateRealEstateData();
+            var result = await Svc<IRealEstatesServices>().Update(update);
+
+            Assert.DoesNotMatch(result.Location, createRealEstate.Location);
+            Assert.NotEqual(result.ModifiedAt, createRealEstate.ModifiedAt);
+        }
+
+        [Fact]
+        public async Task ShouldNot_UpdateRealEstate_WhenDidNotUpdateData()
+        {
+            RealEstateDto dto = MockRealEstateData();
+            var createRealEstate = await Svc<IRealEstatesServices>().Create(dto);
+
+            RealEstateDto nullUpdate = MockNullRealEstateData();
+            var result = await Svc<IRealEstatesServices>().Update(nullUpdate);
+
+            // Assert
+            Assert.NotEqual(createRealEstate.Id, result.Id);
+        }
+
+        [Fact]
+        public async Task ShouldNot_UpdateRealEstate_WhenSizeIsZero()
+        {
+            // Arrange
+            RealEstateDto invalidDto = MockInvalidRealEstateData();
+
+            // Act
+            var result = await Svc<IRealEstatesServices>().Update(invalidDto);
+
+            // Assert
+            Assert.Null(result); // Kontrollime, et tulemus oleks null, kuna v‰rskendus ebaınnestus
+        }
+
+
         private RealEstateDto MockRealEstateData()
         {
             RealEstateDto realEstate = new()
@@ -94,11 +168,49 @@ namespace ShopTARge23.RealEstateTest
                 CreatedAt = DateTime.Now,
                 ModifiedAt = DateTime.Now
             };
-            
+
             return realEstate;
         }
 
-        
+        private RealEstateDto MockUpdateRealEstateData()
+        {
+            RealEstateDto realEstate = new()
+            {
+                Location = "vbn",
+                Size = 44,
+                RoomNumber = 6,
+                BuildingType = "vbn",
+                CreatedAt = DateTime.Now.AddYears(1),
+                ModifiedAt = DateTime.Now.AddYears(1),
+            };
+            return realEstate;
+        }
+        private RealEstateDto MockNullRealEstateData()
+        {
+            RealEstateDto realEstate = new()
+            {
+                Id = null,
+                Location = "vbn",
+                Size = 44,
+                RoomNumber = 6,
+                BuildingType = "vbn",
+                CreatedAt = DateTime.Now.AddYears(1),
+                ModifiedAt = DateTime.Now.AddYears(1),
+            };
+            return realEstate;
+        }
+        private RealEstateDto MockInvalidRealEstateData()
+        {
+            return new RealEstateDto
+            {
+                Size = 0, // Kehtetu v‰‰rtus
+                Location = "Invalid Location",
+                RoomNumber = 1,
+                BuildingType = "Invalid Building",
+                CreatedAt = DateTime.Now,
+                ModifiedAt = DateTime.Now
+            };
+        }
 
     }
 }
