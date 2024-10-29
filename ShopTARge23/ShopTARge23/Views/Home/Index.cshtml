@@ -1,8 +1,85 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿
+<!-- Banner -->
+<section id="banner">
+    <div class="content">
+        <header>
+            <h2>Welcome</h2>
+        </header>
+        <span class="image"><img src="images/pic01.jpg" alt="" /></span>
+    </div>
+    <a href="#one" class="goto-next scrolly">Next</a>
+</section>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+
+<!-- One -->
+<section id="one" class="spotlight style1 bottom">
+	<a href="#top" class="goto-prev scrolly">Previous</a>
+	<span class="image fit main"><img src="images/pic02.jpg" alt="" /></span>
+	<div class="content">
+		<div class="container">
+			<div class="row">
+				<div class="col-4 col-12-medium">
+					<header>
+						<h2>Spaceships</h2>
+						<p>Nascetur eu nibh vestibulum amet gravida nascetur praesent</p>
+					</header>
+				</div>
+				<div class="col-4 col-12-medium">
+					<p>
+						Feugiat accumsan lorem eu ac lorem amet sed accumsan donec.
+						Blandit orci porttitor semper. Arcu phasellus tortor enim mi
+						nisi praesent dolor adipiscing. Integer mi sed nascetur cep aliquet
+						augue varius tempus lobortis porttitor accumsan consequat
+						adipiscing lorem dolor.
+					</p>
+				</div>
+				<div class="col-4 col-12-medium">
+					<p>
+						Morbi enim nascetur et placerat lorem sed iaculis neque ante
+						adipiscing adipiscing metus massa. Blandit orci porttitor semper.
+						Arcu phasellus tortor enim mi mi nisi praesent adipiscing. Integer
+						mi sed nascetur cep aliquet augue varius tempus. Feugiat lorem
+						ipsum dolor nullam.
+					</p>
+					<ul class="actions">
+						<li><a asp-controller="Spaceships" asp-action="Index" class="button">To the List</a></li>
+				</ul
+				</div>
+			</div>
+		</div>
+	</div>
+	<a href="#two" class="goto-next scrolly">Next</a>
+</section>
+
+<!-- Two -->
+<section id="two" class="spotlight style2 right">
+	<span class="image fit main"><img src="images/pic03.jpg" alt="" /></span>
+	<div class="content">
+		<header>
+			<h2>Real Estate</h2>
+			<p>Nunc commodo accumsan eget id nisi eu col volutpat magna</p>
+		</header>
+		<p>Feugiat accumsan lorem eu ac lorem amet ac arcu phasellus tortor enim mi mi nisi praesent adipiscing. Integer mi sed nascetur cep aliquet augue varius tempus lobortis porttitor lorem et accumsan consequat adipiscing lorem.</p>
+		<ul class="actions">
+			<li><a asp-controller="Realestates" asp-action="Index" class="button">To the List</a></li>
+		</ul>
+	</div>
+	<a href="#three" class="goto-next scrolly">Next</a>
+</section>
+
+<!-- Three -->
+<section id="three" class="spotlight style3 left">
+	<span class="image fit main"><img src="images/pic04.jpg" alt="" /></span>
+	<div class="content">
+		<header>
+			<h2>Kindergartens</h2>
+			<p>Accumsan integer ultricies aliquam vel massa sapien phasellus</p>
+		</header>
+		<p>Feugiat accumsan lorem eu ac lorem amet ac arcu phasellus tortor enim mi mi nisi praesent adipiscing. Integer mi sed nascetur cep aliquet augue varius tempus lobortis porttitor lorem et accumsan consequat adipiscing lorem.</p>
+		<ul class="actions">
+			<li><a asp-controller="Kindergartens" asp-action="Index" class="button">To the List</a></li>
+		</ul>
+	</div>
+	<a href="#four" class="goto-next scrolly">Next</a>
+</section>
+
