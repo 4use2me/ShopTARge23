@@ -1,0 +1,30 @@
+﻿@model List<ShopTARge23.Models.Coctails.CoctailViewModel>
+
+<!-- Main -->
+<div id="main" class="wrapper style1">
+    <div class="container">
+        <header class="major">
+            <h2>Search result for "@ViewBag.SearchQuery"</h2>
+        </header>
+
+
+        @if (Model != null && Model.Count > 0)
+        {
+            <ul>
+                @foreach (var cocktail in Model)
+                {
+                    <li>
+                        <h3>@cocktail.StrDrink</h3>
+                        <p>@cocktail.StrCategory</p>
+                        <img src="@cocktail.StrDrinkThumb" alt="@cocktail.StrDrink" style="width: 100px;" />
+                        <a href="@Url.Action("Coctail", "Coctails", new { coctail = cocktail.StrDrink })">View Details</a>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No cocktails found.</p>
+        }
+    </div>
+</div>

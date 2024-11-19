@@ -1,0 +1,142 @@
+﻿@model IEnumerable<ShopTARge23.Models.FreeToPlay.IndexViewModel>
+
+@{
+    int rownumber = 1;
+    var currentSortOrder = ViewContext.HttpContext.Request.Query["sortOrder"].ToString();
+    var currentSearchString = ViewContext.HttpContext.Request.Query["searchString"].ToString();
+    int currentPage = ViewBag.CurrentPage;
+    int totalPages = ViewBag.TotalPages;
+    int maxPageLinks = 3;
+    int startPage = Math.Max(1, currentPage - 1);
+    int endPage = Math.Min(totalPages, currentPage + 1);
+
+    if (currentPage == 1)
+    {
+        endPage = Math.Min(totalPages, startPage + (maxPageLinks - 1));
+    }
+    else if (currentPage == totalPages)
+    {
+        startPage = Math.Max(1, endPage - (maxPageLinks - 1));
+    }
+}
+
+<!-- Main -->
+<div id="main" class="wrapper style1">
+    <div class="container">
+        <header class="major">
+            <h2>Free games to play</h2>
+        </header>
+
+<form method="get" asp-action="Index">
+    <div class="form-group row">
+        <div class="col">
+            <input type="text" name="searchString" value="@currentSearchString" class="form-control" placeholder="Search games by title" />
+        </div>
+        <div class="col">
+            <button type="submit" class="btn button-details">Search</button>
+        </div>
+        
+        
+    </div>
+</form>
+
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">
+                Name
+                @if (currentSortOrder == "name_desc")
+                {
+                    <a asp-action="Index" asp-route-sortOrder="name_asc" asp-route-searchString="@currentSearchString">▲</a>
+                }
+                else
+                {
+                    <a asp-action="Index" asp-route-sortOrder="name_desc" asp-route-searchString="@currentSearchString">▼</a>
+                }
+            </th>
+            <th scope="col">
+                Genre
+                @if (currentSortOrder == "genre_desc")
+                {
+                    <a asp-action="Index" asp-route-sortOrder="genre_asc" asp-route-searchString="@currentSearchString">▲</a>
+                }
+                else
+                {
+                    <a asp-action="Index" asp-route-sortOrder="genre_desc" asp-route-searchString="@currentSearchString">▼</a>
+                }
+                </th>
+            <th scope="col">
+                Platform
+                @if (currentSortOrder == "platform_desc")
+                {
+                    <a asp-action="Index" asp-route-sortOrder="platform_asc" asp-route-searchString="@currentSearchString">▲</a>
+                }
+                else
+                {
+                    <a asp-action="Index" asp-route-sortOrder="platform_desc" asp-route-searchString="@currentSearchString">▼</a>
+                }
+                </th>
+            <th scope="col">
+                Release Date
+                @if (currentSortOrder == "release_date_desc")
+                {
+                    <a asp-action="Index" asp-route-sortOrder="release_date_asc" asp-route-searchString="@currentSearchString">▲</a>
+                }
+                else
+                {
+                    <a asp-action="Index" asp-route-sortOrder="release_date_desc" asp-route-searchString="@currentSearchString">▼</a>
+                }
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var freegames in Model)
+        {
+            <tr>
+                <td>@rownumber</td>
+                <td>@freegames.title</td>
+                <td>@freegames.genre</td>
+                <td>@freegames.platform</td>
+                <td>@freegames.release_date</td>
+                <td>
+                    <img src="@freegames.thumbnail" alt="@freegames.title Thumbnail" style="width: 100px; height: auto;" />
+                </td>
+            </tr>
+            rownumber += 1;
+        }
+    </tbody>
+</table>
+@if (!string.IsNullOrEmpty(currentSearchString))
+{
+    <form method="get" asp-action="Index">
+        <button type="submit" class="btn button-back">Back to Full List</button>
+    </form>
+
+}
+
+@if (totalPages > 1)
+{
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link" aria-label="Previous" asp-action="Index" asp-route-pageNumber="@(currentPage - 1)" asp-route-sortOrder="@currentSortOrder" asp-route-searchString="@currentSearchString">
+                    <span aria-hidden="true">&laquo;</span></a>
+            </li>
+
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-pageNumber="@i" asp-route-sortOrder="@currentSortOrder" asp-route-searchString="@currentSearchString">@i</a>
+                </li>
+            }
+
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link" aria-label="Next" asp-action="Index" asp-route-pageNumber="@(currentPage + 1)" asp-route-sortOrder="@currentSortOrder" asp-route-searchString="@currentSearchString">
+                    <span aria-hidden="true">&raquo;</span></a>
+            </li>
+        </ul>
+    </nav>
+}

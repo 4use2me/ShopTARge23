@@ -79,6 +79,16 @@ input, select, textarea {
 	appearance: none;
 }
 
+.pagination {
+	display: flex;
+	justify-content: center;
+	flex-wrap: nowrap;
+	gap: 0.5em; /* Lisab vahe elementide vahele */
+}
+
+	.pagination .page-item {
+		flex: 0 0 auto; /* Väldib paindumist ja säilitab horisontaalse paigutuse */
+	}
 /* Basic */
 
 	html {

@@ -1,0 +1,40 @@
+﻿@model ShopTARge23.Models.Coctails.SearchCoctailViewModel
+
+<!-- Main -->
+<div id="main" class="wrapper style1">
+    <div class="container">
+        <header class="major">
+            <h2>Find a coctail receipe</h2>
+        </header>
+
+         <!-- Content -->
+        <section id="content">
+            <form method="post">
+                <div class="container">
+                    <div class="form-group col-md-offset-3 col-md-5">
+                        <div scope="col">Coctail name</div>
+                        <input asp-for="SearchCoctail" class="form-control" />
+                        <span asp-validation-for="SearchCoctail" class="text-danger"></span>
+                    </div>
+                </div>
+                <br />
+                <div class="container">
+                    <div class="form-group col-md-offset-3 col-md-5">
+                        <button asp-controller="Coctails" asp-action="searchCoctails" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+    
+<!-- Scripts -->
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+
+<script src="~/assets/js/jquery.min.js" asp-append-version="true"></script>
+<script src="~/assets/js/browser.min.js" asp-append-version="true"></script>
+<script src="~/assets/js/breakpoints.min.js" asp-append-version="true"></script>
+<script src="~/assets/js/util.js" asp-append-version="true"></script>
+<script src="~/assets/js/main.js" asp-append-version="true"></script>

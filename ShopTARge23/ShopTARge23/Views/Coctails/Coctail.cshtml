@@ -1,0 +1,63 @@
+﻿@model ShopTARge23.Models.Coctails.CoctailViewModel
+
+<!-- Main -->
+<div id="main" class="wrapper style1">
+    <div class="container">
+        <header class="major">
+            <h2>Receipe for @Html.DisplayFor(model => model.StrDrink)</h2>
+        </header>
+
+        <!-- Content -->
+        <section id="content">
+            <div><h1>Ingredients</h1></div>
+            <div>
+                @{
+                    // Koosta loend koostisosadest ja filtreeri välja tühjad väärtused
+                    var ingredients = new List<string>
+                    {
+                        Model.StrIngredient1,
+                        Model.StrIngredient2,
+                        Model.StrIngredient3,
+                        Model.StrIngredient4,
+                        Model.StrIngredient5,
+                        Model.StrIngredient6,
+                        Model.StrIngredient7,
+                        Model.StrIngredient8,
+                        Model.StrIngredient9,
+                        Model.StrIngredient10,
+                        Model.StrIngredient11,
+                        Model.StrIngredient12,
+                        Model.StrIngredient13,
+                        Model.StrIngredient14,
+                        Model.StrIngredient15
+                    }.Where(ingredient => !string.IsNullOrEmpty(ingredient)).ToList();
+
+                    // Kuva koostisosad, eraldades need komadega
+                    @string.Join(", ", ingredients)
+                }
+            </div>
+            <br />
+            <div>
+                <h1>Instructions</h1>
+            </div>
+            <div>         
+                @Html.DisplayFor(model => model.StrInstructions)
+            </div>
+            <br />
+            <div>
+                <h1>Glass</h1>
+            </div>
+            <div>
+                @Html.DisplayFor(model => model.StrGlass)
+            </div>
+            <br />
+            <div>
+                <img src="@Model.StrDrinkThumb" alt="Drink Image" style="width: 200px; height: auto;"  />
+            </div>
+        </section>
+    </div>
+</div>
+
+<a asp-action="Index" asp-controller="Coctails" class="btn btn-danger">Back</a>
+
+  
