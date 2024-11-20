@@ -23,59 +23,55 @@ namespace ShopTARge23.Controllers
                 Results = new List<CoctailViewModel>()
             };
 
-            if (!string.IsNullOrEmpty(searchQuery))
+            // Taastame TempData andmed, kui need on olemas
+            if (TempData["SearchCoctail"] != null && TempData["Results"] != null)
             {
-                // Kutsu teenust, et otsida kokteile (vajadusel lisa teenuskutse loogika)
+                model.SearchCoctail = TempData["SearchCoctail"] as string;
+
+                // Deserialiseerime tulemused JSON-ist
+                var resultsJson = TempData["Results"] as string;
+                if (!string.IsNullOrEmpty(resultsJson))
+                {
+                    model.Results = System.Text.Json.JsonSerializer.Deserialize<List<CoctailViewModel>>(resultsJson);
+                }
             }
 
             return View(model);
         }
 
-
         [HttpPost]
         public async Task<IActionResult> Index(SearchCoctailViewModel model)
         {
-            // Kui mudel ei ole kehtiv, tagastame vaate
             if (!ModelState.IsValid)
             {
-                model.Results = model.Results ?? new List<CoctailViewModel>();  // Veendume, et Results on algväärtustatud
+                model.Results ??= new List<CoctailViewModel>();
                 return View(model);
             }
 
             if (string.IsNullOrEmpty(model.SearchCoctail))
             {
                 ModelState.AddModelError("", "Please enter a cocktail name to search.");
-                model.Results = model.Results ?? new List<CoctailViewModel>();  // Veendume, et Results on algväärtustatud
+                model.Results ??= new List<CoctailViewModel>();
                 return View(model);
             }
 
             // Otsime kokteile teenusest
             var coctailsDto = await _coctailServices.GetCocktailsAsync(model.SearchCoctail);
 
-            // Kui ei leita kokteile, kuvame veateate
             if (coctailsDto == null || coctailsDto.Count == 0)
             {
                 ModelState.AddModelError("", $"No results found for \"{model.SearchCoctail}\".");
             }
 
-            // Veenduge, et Results on initsialiseeritud tühi list
-            model.Results = model.Results ?? new List<CoctailViewModel>();
-
-            // Kui coctailsDto ei ole null, täiendame Results listi
-            if (coctailsDto != null)
+            model.Results = coctailsDto?.Select(dto => new CoctailViewModel
             {
-                foreach (var coctailDto in coctailsDto)
-                {
-                    var viewModel = new CoctailViewModel
-                    {
-                        IdDrink = coctailDto.IdDrink,
-                        StrDrink = coctailDto.StrDrink
-                        // Täiendage vastavalt vajadusele
-                    };
+                IdDrink = dto.IdDrink,
+                StrDrink = dto.StrDrink
+            }).ToList() ?? new List<CoctailViewModel>();
 
-                    model.Results.Add(viewModel);  // Lisame Resultsi listi
-                }
-            }
+            // Serialiseerime tulemused JSON-iks ja salvestame TempData-sse
+            TempData["SearchCoctail"] = model.SearchCoctail;
+            TempData["Results"] = System.Text.Json.JsonSerializer.Serialize(model.Results);
 
             return View(model);
         }
@@ -126,7 +122,5 @@ namespace ShopTARge23.Controllers
             ViewData["SearchQuery"] = searchQuery; // Edasta otsinguväärtus
             return View("Coctail", coctailViewModel);
         }
-
-
     }
 }
