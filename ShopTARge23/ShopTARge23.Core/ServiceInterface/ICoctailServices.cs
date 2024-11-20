@@ -1,15 +1,16 @@
 ﻿using ShopTARge23.Core.Dto.CoctailsDtos;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ShopTARge23.Core.ServiceInterface
 {
     public interface ICoctailServices
     {
-        Task<CoctailResultDto> GetCoctails(CoctailResultDto dto);
+        // Kokteilide otsing
+        Task<List<CoctailSearchDto>> GetCocktailsAsync(string searchTerm);
 
+        // Kokteili detailide päring
+        Task<CoctailDetailDto> GetCoctailDetailsAsync(string idDrink);
     }
 }
+

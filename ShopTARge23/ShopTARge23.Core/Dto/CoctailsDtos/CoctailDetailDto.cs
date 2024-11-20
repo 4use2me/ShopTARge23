@@ -1,6 +1,6 @@
 ﻿namespace ShopTARge23.Core.Dto.CoctailsDtos
 {
-    public class CoctailResultDto
+    public class CoctailDetailDto
     {
         public string IdDrink { get; set; }
         public string StrDrink { get; set; }

@@ -1,5 +1,9 @@
 ﻿@model ShopTARge23.Models.Coctails.CoctailViewModel
 
+@{
+    ViewData["Title"] = "Cocktail Details";
+}
+
 <!-- Main -->
 <div id="main" class="wrapper style1">
     <div class="container">
@@ -14,23 +18,23 @@
                 @{
                     // Koosta loend koostisosadest ja filtreeri välja tühjad väärtused
                     var ingredients = new List<string>
-                    {
-                        Model.StrIngredient1,
-                        Model.StrIngredient2,
-                        Model.StrIngredient3,
-                        Model.StrIngredient4,
-                        Model.StrIngredient5,
-                        Model.StrIngredient6,
-                        Model.StrIngredient7,
-                        Model.StrIngredient8,
-                        Model.StrIngredient9,
-                        Model.StrIngredient10,
-                        Model.StrIngredient11,
-                        Model.StrIngredient12,
-                        Model.StrIngredient13,
-                        Model.StrIngredient14,
-                        Model.StrIngredient15
-                    }.Where(ingredient => !string.IsNullOrEmpty(ingredient)).ToList();
+                {
+                Model.StrIngredient1,
+                Model.StrIngredient2,
+                Model.StrIngredient3,
+                Model.StrIngredient4,
+                Model.StrIngredient5,
+                Model.StrIngredient6,
+                Model.StrIngredient7,
+                Model.StrIngredient8,
+                Model.StrIngredient9,
+                Model.StrIngredient10,
+                Model.StrIngredient11,
+                Model.StrIngredient12,
+                Model.StrIngredient13,
+                Model.StrIngredient14,
+                Model.StrIngredient15
+                }.Where(ingredient => !string.IsNullOrEmpty(ingredient)).ToList();
 
                     // Kuva koostisosad, eraldades need komadega
                     @string.Join(", ", ingredients)
@@ -40,7 +44,7 @@
             <div>
                 <h1>Instructions</h1>
             </div>
-            <div>         
+            <div>
                 @Html.DisplayFor(model => model.StrInstructions)
             </div>
             <br />
@@ -52,12 +56,16 @@
             </div>
             <br />
             <div>
-                <img src="@Model.StrDrinkThumb" alt="Drink Image" style="width: 200px; height: auto;"  />
+                <img src="@Model.StrDrinkThumb" alt="Drink Image" style="width: 200px; height: auto;" />
             </div>
         </section>
     </div>
+    <br />
+    <a href="@Url.Action("Index", "Coctails", new { searchQuery = ViewData["SearchQuery"] })">Back</a>
+
 </div>
 
-<a asp-action="Index" asp-controller="Coctails" class="btn btn-danger">Back</a>
+
+
 
   

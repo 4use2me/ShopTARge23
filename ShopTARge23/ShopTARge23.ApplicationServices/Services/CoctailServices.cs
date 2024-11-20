@@ -1,82 +1,97 @@
-﻿using Nancy.Json;
-using Nancy;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using ShopTARge23.Core.Dto.CoctailsDtos;
 using ShopTARge23.Core.ServiceInterface;
+using Newtonsoft.Json;
 
 namespace ShopTARge23.ApplicationServices.Services
 {
     public class CoctailServices : ICoctailServices
     {
-        public async Task<CoctailResultDto> GetCoctails(CoctailResultDto dto)
-
+        public async Task<List<CoctailSearchDto>> GetCocktailsAsync(string searchTerm)
         {
-            string apiKey = "1";
-            string apiCallUrl = $"https://www.thecocktaildb.com/api/json/v1/{apiKey}/search.php?s={dto.StrDrink}";
-            using (WebClient client = new())
+            string apiKey = "1"; // API võti
+            string apiCallUrl = $"https://www.thecocktaildb.com/api/json/v1/{apiKey}/search.php?s={searchTerm}";
+            using (WebClient client = new WebClient())
             {
+                // Lae andmed API-st
                 string json = client.DownloadString(apiCallUrl);
-                CoctailRootDto coctailResult = new JavaScriptSerializer().Deserialize<CoctailRootDto>(json);
+                var coctailResult = JsonConvert.DeserializeObject<CoctailRootDto>(json);
 
-                dto.IdDrink = coctailResult.Drinks[0].IdDrink;
-                dto.StrDrink = coctailResult.Drinks[0].StrDrink;
-                dto.StrDrinkAlternate = coctailResult.Drinks[0].StrDrinkAlternate;
-                dto.StrTags = coctailResult.Drinks[0].StrTags;
-                dto.StrVideo = coctailResult.Drinks[0].StrVideo;
-                dto.StrCategory = coctailResult.Drinks[0].StrCategory;
-                dto.StrIBA = coctailResult.Drinks[0].StrGlass;
-                dto.StrAlcoholic = coctailResult.Drinks[0].StrAlcoholic;
-                dto.StrGlass = coctailResult.Drinks[0].StrGlass;
-                dto.StrInstructions = coctailResult.Drinks[0].StrInstructions;
-                dto.StrInstructionsES = coctailResult.Drinks[0].StrInstructionsES;
-                dto.StrInstructionsDE = coctailResult.Drinks[0].StrInstructionsDE;
-                dto.StrInstructionsFR = coctailResult.Drinks[0].StrInstructionsFR;
-                dto.StrInstructionsIT = coctailResult.Drinks[0].StrInstructionsIT;
-                dto.StrInstructionsZHHANS = coctailResult.Drinks[0].StrInstructionsZHHANS;
-                dto.StrInstructionsZHHANT = coctailResult.Drinks[0].StrInstructionsZHHANT;
-                dto.StrDrinkThumb = coctailResult.Drinks[0].StrDrinkThumb;
-                dto.StrIngredient1 = coctailResult.Drinks[0].StrIngredient1;
-                dto.StrIngredient2 = coctailResult.Drinks[0].StrIngredient2;
-                dto.StrIngredient3 = coctailResult.Drinks[0].StrIngredient3;
-                dto.StrIngredient4 = coctailResult.Drinks[0].StrIngredient4;
-                dto.StrIngredient5 = coctailResult.Drinks[0].StrIngredient5;
-                dto.StrIngredient6 = coctailResult.Drinks[0].StrIngredient6;
-                dto.StrIngredient7 = coctailResult.Drinks[0].StrIngredient7;
-                dto.StrIngredient8 = coctailResult.Drinks[0].StrIngredient8;
-                dto.StrIngredient9 = coctailResult.Drinks[0].StrIngredient9;
-                dto.StrIngredient10 = coctailResult.Drinks[0].StrIngredient10;
-                dto.StrIngredient11 = coctailResult.Drinks[0].StrIngredient11;
-                dto.StrIngredient12 = coctailResult.Drinks[0].StrIngredient12;
-                dto.StrIngredient13 = coctailResult.Drinks[0].StrIngredient13;
-                dto.StrIngredient14 = coctailResult.Drinks[0].StrIngredient14;
-                dto.StrIngredient15 = coctailResult.Drinks[0].StrIngredient15;
-                dto.StrMeasure1 = coctailResult.Drinks[0].StrMeasure1;
-                dto.StrMeasure2 = coctailResult.Drinks[0].StrMeasure2;
-                dto.StrMeasure3 = coctailResult.Drinks[0].StrMeasure3;
-                dto.StrMeasure4 = coctailResult.Drinks[0].StrMeasure4;
-                dto.StrMeasure5 = coctailResult.Drinks[0].StrMeasure5;
-                dto.StrMeasure6 = coctailResult.Drinks[0].StrMeasure6;
-                dto.StrMeasure7 = coctailResult.Drinks[0].StrMeasure7;
-                dto.StrMeasure8 = coctailResult.Drinks[0].StrMeasure8;
-                dto.StrMeasure9 = coctailResult.Drinks[0].StrMeasure9;
-                dto.StrMeasure10 = coctailResult.Drinks[0].StrMeasure10;
-                dto.StrMeasure11 = coctailResult.Drinks[0].StrMeasure11;
-                dto.StrMeasure12 = coctailResult.Drinks[0].StrMeasure12;
-                dto.StrMeasure13 = coctailResult.Drinks[0].StrMeasure13;
-                dto.StrMeasure14 = coctailResult.Drinks[0].StrMeasure14;
-                dto.StrMeasure15 = coctailResult.Drinks[0].StrMeasure15;
-                dto.StrImageSource = coctailResult.Drinks[0].StrImageSource;
-                dto.StrImageAttribution = coctailResult.Drinks[0].StrImageAttribution;
-                dto.StrCreativeCommonsConfirmed = coctailResult.Drinks[0].StrCreativeCommonsConfirmed;
-                dto.DateModified = coctailResult.Drinks[0].DateModified;
+                List<CoctailSearchDto> result = new List<CoctailSearchDto>();
 
+                // Läbime kõik leitud kokteilid ja lisame need Listi
+                if (coctailResult.Drinks != null)
+                {
+                    foreach (var drink in coctailResult.Drinks)
+                    {
+                        CoctailSearchDto dto = new CoctailSearchDto
+                        {
+                            IdDrink = drink.IdDrink,
+                            StrDrink = drink.StrDrink,
+                            StrDrinkThumb = drink.StrDrinkThumb,
+                        };
+
+                        result.Add(dto);
+                    }
+                }
+
+                return result;
             }
-            return dto;
+        }
+
+        public async Task<CoctailDetailDto> GetCoctailDetailsAsync(string idDrink)
+        {
+            string apiKey = "1"; // API võti
+            string apiCallUrl = $"https://www.thecocktaildb.com/api/json/v1/{apiKey}/lookup.php?i={idDrink}";
+            using (WebClient client = new WebClient())
+            {
+                // Lae andmed API-st
+                string json = client.DownloadString(apiCallUrl);
+
+                var coctailResult = JsonConvert.DeserializeObject<CoctailRootDto>(json);
+
+                // Tagastame esimese kokteili detailid (tavaliselt on vaid üks kokteil vastuses)
+                if (coctailResult.Drinks != null && coctailResult.Drinks.Count > 0)
+                {
+                    var drink = coctailResult.Drinks[0];
+
+                    CoctailDetailDto dto = new CoctailDetailDto
+                    {
+                        IdDrink = drink.IdDrink,
+                        StrDrink = drink.StrDrink,
+                        StrDrinkThumb = drink.StrDrinkThumb,
+                        StrTags = drink.StrTags,
+                        StrVideo = drink.StrVideo,
+                        StrCategory = drink.StrCategory,
+                        StrIBA = drink.StrIBA,
+                        StrAlcoholic = drink.StrAlcoholic,
+                        StrGlass = drink.StrGlass,
+                        StrInstructions = drink.StrInstructions,
+                        StrIngredient1 = drink.StrIngredient1,
+                        StrIngredient2 = drink.StrIngredient2,
+                        StrIngredient3 = drink.StrIngredient3,
+                        StrIngredient4 = drink.StrIngredient4,
+                        StrIngredient5 = drink.StrIngredient5,
+                        StrIngredient6 = drink.StrIngredient6,
+                        StrIngredient7 = drink.StrIngredient7,
+                        StrIngredient8 = drink.StrIngredient8,
+                        StrIngredient9 = drink.StrIngredient9,
+                        StrIngredient10 = drink.StrIngredient10,
+                        StrIngredient11 = drink.StrIngredient11,
+                        StrIngredient12 = drink.StrIngredient12,
+                        StrIngredient13 = drink.StrIngredient13,
+                        StrIngredient14 = drink.StrIngredient14,
+                        StrIngredient15 = drink.StrIngredient15,
+                        // Lisa muud vajalikud väljad...
+                    };
+
+                    return dto;
+                }
+
+                return null;
+            }
         }
     }
 }

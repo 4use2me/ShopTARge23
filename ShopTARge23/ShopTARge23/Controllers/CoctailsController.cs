@@ -1,105 +1,132 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ShopTARge23.Core.Dto.CoctailsDtos;
 using ShopTARge23.Core.ServiceInterface;
 using ShopTARge23.Models.Coctails;
 
 namespace ShopTARge23.Controllers
-
 {
     public class CoctailsController : Controller
     {
         private readonly ICoctailServices _coctailServices;
 
-        public CoctailsController
-            (
-            ICoctailServices coctailServices
-            )
+        public CoctailsController(ICoctailServices coctailServices)
         {
             _coctailServices = coctailServices;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
 
-        [HttpPost]
-
-        public IActionResult SearchCoctails(SearchCoctailViewModel model)
+        [HttpGet]
+        public IActionResult Index(string searchQuery)
         {
-            if (ModelState.IsValid)
+            var model = new SearchCoctailViewModel
             {
-                return RedirectToAction("Coctail", "Coctails", new { coctail = model.SearchCoctail });
+                SearchCoctail = searchQuery,
+                Results = new List<CoctailViewModel>()
+            };
+
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                // Kutsu teenust, et otsida kokteile (vajadusel lisa teenuskutse loogika)
             }
+
             return View(model);
         }
 
-        [HttpGet]
-        public IActionResult Coctail(string coctail)
+
+        [HttpPost]
+        public async Task<IActionResult> Index(SearchCoctailViewModel model)
         {
-            CoctailResultDto dto = new();
-            dto.StrDrink = coctail;
+            // Kui mudel ei ole kehtiv, tagastame vaate
+            if (!ModelState.IsValid)
+            {
+                model.Results = model.Results ?? new List<CoctailViewModel>();  // Veendume, et Results on algväärtustatud
+                return View(model);
+            }
 
+            if (string.IsNullOrEmpty(model.SearchCoctail))
+            {
+                ModelState.AddModelError("", "Please enter a cocktail name to search.");
+                model.Results = model.Results ?? new List<CoctailViewModel>();  // Veendume, et Results on algväärtustatud
+                return View(model);
+            }
 
-            _coctailServices.GetCoctails(dto); //service väljakutsumine
-            CoctailViewModel vm = new();
+            // Otsime kokteile teenusest
+            var coctailsDto = await _coctailServices.GetCocktailsAsync(model.SearchCoctail);
 
-            vm.IdDrink = dto.IdDrink;
-            vm.StrDrink = dto.StrDrink;
-            vm.StrDrinkAlternate = dto.StrDrinkAlternate;
-            vm.StrTags = dto.StrTags;
-            vm.StrVideo = dto.StrVideo;
-            vm.StrCategory = dto.StrCategory;
-            vm.StrIBA = dto.StrGlass;
-            vm.StrAlcoholic = dto.StrAlcoholic;
-            vm.StrGlass = dto.StrGlass;
-            vm.StrInstructions = dto.StrInstructions;
-            vm.StrInstructionsES = dto.StrInstructionsES;
-            vm.StrInstructionsDE = dto.StrInstructionsDE;
-            vm.StrInstructionsFR = dto.StrInstructionsFR;
-            vm.StrInstructionsIT = dto.StrInstructionsIT;
-            vm.StrInstructionsZHHANS = dto.StrInstructionsZHHANS;
-            vm.StrInstructionsZHHANT = dto.StrInstructionsZHHANT;
-            vm.StrDrinkThumb = dto.StrDrinkThumb;
-            vm.StrIngredient1 = dto.StrIngredient1;
-            vm.StrIngredient2 = dto.StrIngredient2;
-            vm.StrIngredient3 = dto.StrIngredient3;
-            vm.StrIngredient4 = dto.StrIngredient4;
-            vm.StrIngredient5 = dto.StrIngredient5;
-            vm.StrIngredient6 = dto.StrIngredient6;
-            vm.StrIngredient7 = dto.StrIngredient7;
-            vm.StrIngredient8 = dto.StrIngredient8;
-            vm.StrIngredient9 = dto.StrIngredient9;
-            vm.StrIngredient10 = dto.StrIngredient10;
-            vm.StrIngredient11 = dto.StrIngredient11;
-            vm.StrIngredient12 = dto.StrIngredient12;
-            vm.StrIngredient13 = dto.StrIngredient13;
-            vm.StrIngredient14 = dto.StrIngredient14;
-            vm.StrIngredient15 = dto.StrIngredient15;
-            vm.StrMeasure1 = dto.StrMeasure1;
-            vm.StrMeasure2 = dto.StrMeasure2;
-            vm.StrMeasure3 = dto.StrMeasure3;
-            vm.StrMeasure4 = dto.StrMeasure4;
-            vm.StrMeasure5 = dto.StrMeasure5;
-            vm.StrMeasure6 = dto.StrMeasure6;
-            vm.StrMeasure7 = dto.StrMeasure7;
-            vm.StrMeasure8 = dto.StrMeasure8;
-            vm.StrMeasure9 = dto.StrMeasure9;
-            vm.StrMeasure10 = dto.StrMeasure10;
-            vm.StrMeasure11 = dto.StrMeasure11;
-            vm.StrMeasure12 = dto.StrMeasure12;
-            vm.StrMeasure13 = dto.StrMeasure13;
-            vm.StrMeasure14 = dto.StrMeasure14;
-            vm.StrMeasure15 = dto.StrMeasure15;
-            vm.StrImageSource = dto.StrImageSource;
-            vm.StrImageAttribution = dto.StrImageAttribution;
-            vm.StrCreativeCommonsConfirmed = dto.StrCreativeCommonsConfirmed;
-            vm.DateModified = dto.DateModified;
+            // Kui ei leita kokteile, kuvame veateate
+            if (coctailsDto == null || coctailsDto.Count == 0)
+            {
+                ModelState.AddModelError("", $"No results found for \"{model.SearchCoctail}\".");
+            }
 
-            return View(vm);
+            // Veenduge, et Results on initsialiseeritud tühi list
+            model.Results = model.Results ?? new List<CoctailViewModel>();
 
+            // Kui coctailsDto ei ole null, täiendame Results listi
+            if (coctailsDto != null)
+            {
+                foreach (var coctailDto in coctailsDto)
+                {
+                    var viewModel = new CoctailViewModel
+                    {
+                        IdDrink = coctailDto.IdDrink,
+                        StrDrink = coctailDto.StrDrink
+                        // Täiendage vastavalt vajadusele
+                    };
+
+                    model.Results.Add(viewModel);  // Lisame Resultsi listi
+                }
+            }
+
+            return View(model);
         }
 
-    }
+        // Kokteili detailide kuvamine
+        [HttpGet]
+        public async Task<IActionResult> Details(string idDrink, string searchQuery)
+        {
+            if (string.IsNullOrEmpty(idDrink))
+            {
+                return NotFound();
+            }
 
+            var coctailDetailDto = await _coctailServices.GetCoctailDetailsAsync(idDrink);
+
+            if (coctailDetailDto == null)
+            {
+                return NotFound();
+            }
+
+            // Konverteeri CoctailDetailDto CoctailViewModel-iks
+            var coctailViewModel = new CoctailViewModel
+            {
+                IdDrink = coctailDetailDto.IdDrink,
+                StrDrink = coctailDetailDto.StrDrink,
+                StrGlass = coctailDetailDto.StrGlass,
+                StrDrinkThumb = coctailDetailDto.StrDrinkThumb,
+                StrInstructions = coctailDetailDto.StrInstructions,
+                StrIngredient1 = coctailDetailDto.StrIngredient1,
+                StrIngredient2 = coctailDetailDto.StrIngredient2,
+                StrIngredient3 = coctailDetailDto.StrIngredient3,
+                StrIngredient4 = coctailDetailDto.StrIngredient4,
+                StrIngredient5 = coctailDetailDto.StrIngredient5,
+                StrIngredient6 = coctailDetailDto.StrIngredient6,
+                StrIngredient7 = coctailDetailDto.StrIngredient7,
+                StrIngredient8 = coctailDetailDto.StrIngredient8,
+                StrIngredient9 = coctailDetailDto.StrIngredient9,
+                StrIngredient10 = coctailDetailDto.StrIngredient10,
+                StrIngredient11 = coctailDetailDto.StrIngredient11,
+                StrIngredient12 = coctailDetailDto.StrIngredient12,
+                StrIngredient13 = coctailDetailDto.StrIngredient13,
+                StrIngredient14 = coctailDetailDto.StrIngredient14,
+                StrIngredient15 = coctailDetailDto.StrIngredient15
+                // Täida kõik vajalikud atribuudid CoctailDetailDto-st CoctailViewModel-isse
+            };
+
+            // Edasta otsingupäring lingina
+            ViewData["SearchQuery"] = searchQuery; // Edasta otsinguväärtus
+            return View("Coctail", coctailViewModel);
+        }
+
+
+    }
 }
