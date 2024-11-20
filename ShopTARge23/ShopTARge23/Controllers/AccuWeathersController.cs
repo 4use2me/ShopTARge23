@@ -42,7 +42,8 @@ namespace ShopTARge23.Controllers
 			_weatherForecastServices.AccuWeatherResult(dto);
 			AccuWeatherViewModel vm = new();
 
-			vm.EffectiveDate = dto.EffectiveDate;
+            vm.CityName = dto.CityName;
+            vm.EffectiveDate = dto.EffectiveDate;
 			vm.EffectiveEpochDate = dto.EffectiveEpochDate;
 			vm.Severity = dto.Severity;
 			vm.Text = dto.Text;
