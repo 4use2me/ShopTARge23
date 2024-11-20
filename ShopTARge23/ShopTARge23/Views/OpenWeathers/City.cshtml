@@ -1,37 +1,47 @@
 ﻿@model ShopTARge23.Models.OpenWeathers.OpenWeatherViewModel
 
-<div id="main" class="wrapper style1">
-    <div class="container">
+<div id="main" class="wrapper style1" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh;">
+    <div class="container" style="width: 80%; max-width: 1200px;">
+        <!-- Päis -->
         <header class="major">
             <h2>Forecast for @Html.DisplayFor(model => model.City)</h2>
         </header>
 
-        <div class="form-group row">
-            <h1><label asp-for="Temp" class="col-sm-2 col-form-label">Temperature: </label></h1>
-            <h1>@Html.DisplayFor(model =>model.Temp) °C</h1>
-        </div>
+        <!-- Sisu (tekst ja pilt) -->
+        <div class="content-wrapper" style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <!-- Tekst -->
+            <div class="content" style="flex: 2; margin-left: 20px; text-align: left;">
+                <div class="form-group row">
+                    <h1><label asp-for="Temp" class="col-sm-2 col-form-label">Temperature: </label></h1>
+                    <h1>@Html.DisplayFor(model => model.Temp) °C</h1>
+                </div>
+                <div class="form-group row">
+                    <h1><label asp-for="FeelsLike" class="col-sm-2 col-form-label">Feels like:</label></h1>
+                    <h1>@Html.DisplayFor(model => model.FeelsLike) °C</h1>
+                </div>
+                <div class="form-group row">
+                    <h1><label asp-for="Description" class="col-sm-2 col-form-label">Condition:</label></h1>
+                    <h1>@Html.DisplayFor(model => model.Description)</h1>
+                </div>
+                <div class="form-group row">
+                    <h1><label asp-for="Pressure" class="col-sm-2 col-form-label">Pressure:</label></h1>
+                    <h1>@Html.DisplayFor(model => model.Pressure) hPa</h1>
+                </div>
+                <div class="form-group row">
+                    <h1><label asp-for="Humidity" class="col-sm-2 col-form-label">Humidity:</label></h1>
+                    <h1>@Html.DisplayFor(model => model.Humidity) %</h1>
+                </div>
+                <div class="form-group row">
+                    <h1><label asp-for="WindSpeed" class="col-sm-2 col-form-label">Wind speed:</label></h1>
+                    <h1>@Html.DisplayFor(model => model.WindSpeed) m/s</h1>
+                </div>
+                <a asp-action="Index" asp-controller="openWeathers" class="btn btn-danger">Back</a>
+            </div>
 
-        <div class="form-group row">
-            <h1><label asp-for="FeelsLike" class="col-sm-2 col-form-label">Feels like:</label></h1>
-            <h1>@Html.DisplayFor(model =>model.FeelsLike) °C</h1>
+            <!-- Pilt -->
+            <div class="image-container" style="flex: 1; display: flex; justify-content: right; align-items: right;">
+                <img src="/images/weather1.jpg" alt="Weather Icon" style="max-width: 150%; height: auto;">
+            </div>
         </div>
-        <div class="form-group row">
-            <h1><label asp-for="Description" class="col-sm-2 col-form-label">Condition:</label></h1>
-            <h1>@Html.DisplayFor(model =>model.Description)</h1>
-        </div>
-        <div class="form-group row">
-            <h1><label asp-for="Pressure" class="col-sm-2 col-form-label">Pressure:</label></h1>
-            <h1>@Html.DisplayFor(model =>model.Pressure) hPa</h1>
-        </div>
-        <div class="form-group row">
-            <h1><label asp-for="Humidity" class="col-sm-2 col-form-label">Humidity:</label></h1>
-            <h1>@Html.DisplayFor(model =>model.Humidity) %</h1>
-        </div>
-        <div class="form-group row">
-            <h1><label asp-for="WindSpeed" class="col-sm-2 col-form-label">Wind speed:</label></h1>
-            <h1>@Html.DisplayFor(model =>model.WindSpeed) m/s</h1>
-        </div>
-
-    <a asp-action="Index" asp-controller="openWeathers" class="btn btn-danger">Back</a>
-
+    </div>
 </div>
