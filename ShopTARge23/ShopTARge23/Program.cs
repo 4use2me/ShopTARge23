@@ -25,8 +25,9 @@ namespace ShopTARge23
             builder.Services.AddScoped<IChuckNorrisServices, ChuckNorrisServices>();
 			builder.Services.AddScoped<IFreeToPlayServices, FreeToPlayServices>();
             builder.Services.AddScoped<ICoctailServices, CoctailServices>();
+			builder.Services.AddScoped<IOpenWeatherServices, OpenWeatherServices>();
 
-            builder.Services.AddDbContext<ShopTARge23Context>(options =>
+			builder.Services.AddDbContext<ShopTARge23Context>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 

@@ -1,0 +1,37 @@
+﻿@model ShopTARge23.Models.OpenWeathers.OpenWeatherViewModel
+
+<div id="main" class="wrapper style1">
+    <div class="container">
+        <header class="major">
+            <h2>Forecast for @Html.DisplayFor(model => model.City)</h2>
+        </header>
+
+        <div class="form-group row">
+            <h1><label asp-for="Temp" class="col-sm-2 col-form-label">Temperature: </label></h1>
+            <h1>@Html.DisplayFor(model =>model.Temp) °C</h1>
+        </div>
+
+        <div class="form-group row">
+            <h1><label asp-for="FeelsLike" class="col-sm-2 col-form-label">Feels like:</label></h1>
+            <h1>@Html.DisplayFor(model =>model.FeelsLike) °C</h1>
+        </div>
+        <div class="form-group row">
+            <h1><label asp-for="Description" class="col-sm-2 col-form-label">Condition:</label></h1>
+            <h1>@Html.DisplayFor(model =>model.Description)</h1>
+        </div>
+        <div class="form-group row">
+            <h1><label asp-for="Pressure" class="col-sm-2 col-form-label">Pressure:</label></h1>
+            <h1>@Html.DisplayFor(model =>model.Pressure) hPa</h1>
+        </div>
+        <div class="form-group row">
+            <h1><label asp-for="Humidity" class="col-sm-2 col-form-label">Humidity:</label></h1>
+            <h1>@Html.DisplayFor(model =>model.Humidity) %</h1>
+        </div>
+        <div class="form-group row">
+            <h1><label asp-for="WindSpeed" class="col-sm-2 col-form-label">Wind speed:</label></h1>
+            <h1>@Html.DisplayFor(model =>model.WindSpeed) m/s</h1>
+        </div>
+
+    <a asp-action="Index" asp-controller="openWeathers" class="btn btn-danger">Back</a>
+
+</div>
