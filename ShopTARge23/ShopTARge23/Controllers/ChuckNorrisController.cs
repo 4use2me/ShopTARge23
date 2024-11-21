@@ -17,19 +17,14 @@ namespace ShopTARge23.Controllers
 			_chuckNorrisServices = chuckNorrisServices;
 		}
 
-		public IActionResult Index()
-		{
-			return View();
-		}
-
 		[HttpPost]
 		public IActionResult SearchChuckNorrisJokes(ChuckNorrisViewModel model)
 		{
-			return RedirectToAction(nameof(Joke));
+			return RedirectToAction(nameof(Index));
 		}
 
 		[HttpGet]
-		public IActionResult Joke()
+		public IActionResult Index()
 		{
 			ChuckNorrisResultDto dto = new();
 

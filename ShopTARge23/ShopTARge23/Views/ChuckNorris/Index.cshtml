@@ -1,14 +1,29 @@
-﻿﻿<div class="container">
-    <form method="post">
-        <div class="container">
-            <div class="form-group col-md-offset-3 col-md-5">
-                <h2>Welcome to Chuck Norris joke site</h2>
-            </div>
-        </div>
-        <div class="container">
-            <div class="form-group col-md-offset-3 col-md-5">
-                <button asp-controller="chuckNorris" asp-action="searchChuckNorrisJokes" class="btn btn-primary">Chuck Norris joke</button>
-            </div>
-        </div>
-    </form>
+﻿@model ShopTARge23.Models.ChuckNorris.ChuckNorrisViewModel﻿
+
+<!-- Main -->
+<div id="main" class="wrapper style1">
+    <div class="container">
+        <header class="major">
+            <h2>Welcome to Chuck Norris joke site</h2>
+        </header>
+
+        <!-- Content -->
+        <section id="content">
+            <form method="post">
+                <div class="container">
+                    <div class="form-group col-md-offset-3 col-md-5">
+                        <div><h1>Today's Chuck Norris Joke is:</h1><br />
+                            @Html.DisplayFor(model => model.Value)
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="container">
+                    <div class="form-group col-md-offset-3 col-md-5">
+                        <button asp-controller="chuckNorris" asp-action="searchChuckNorrisJokes" class="btn btn-primary">New joke</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
 </div>
