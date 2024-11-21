@@ -16,6 +16,7 @@ namespace ShopTARge23
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddSession();
 
             builder.Services.AddScoped<ISpaceshipsServices, SpaceshipsServices>();
             builder.Services.AddScoped<IFileServices, FileServices>();
@@ -51,13 +52,11 @@ namespace ShopTARge23
             });
 
             app.UseRouting();
-
+            app.UseSession();
             app.UseAuthorization();
-
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-
             app.Run();
         }
     }

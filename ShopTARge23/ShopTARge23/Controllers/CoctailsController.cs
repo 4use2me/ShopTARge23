@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using ShopTARge23.Core.ServiceInterface;
 using ShopTARge23.Models.Coctails;
@@ -15,24 +15,31 @@ namespace ShopTARge23.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(string searchQuery)
+        public IActionResult Index(string searchQuery, bool clearSession = false)
         {
+            if (clearSession)
+            {
+                // Tühjenda ainult siis, kui parameeter clearSession on true
+                HttpContext.Session.Remove("SearchCoctail");
+                HttpContext.Session.Remove("Results");
+            }
+
             var model = new SearchCoctailViewModel
             {
-                SearchCoctail = searchQuery,
+                SearchCoctail = null,
                 Results = new List<CoctailViewModel>()
             };
 
-            // Taastame TempData andmed, kui need on olemas
-            if (TempData["SearchCoctail"] != null && TempData["Results"] != null)
+            // Kui Sessionis on andmed ja clearSession ei ole true
+            if (!clearSession)
             {
-                model.SearchCoctail = TempData["SearchCoctail"] as string;
+                var searchCoctail = HttpContext.Session.GetString("SearchCoctail");
+                var resultsJson = HttpContext.Session.GetString("Results");
 
-                // Deserialiseerime tulemused JSON-ist
-                var resultsJson = TempData["Results"] as string;
-                if (!string.IsNullOrEmpty(resultsJson))
+                if (!string.IsNullOrEmpty(searchCoctail) && !string.IsNullOrEmpty(resultsJson))
                 {
-                    model.Results = System.Text.Json.JsonSerializer.Deserialize<List<CoctailViewModel>>(resultsJson);
+                    model.SearchCoctail = searchCoctail;
+                    model.Results = JsonSerializer.Deserialize<List<CoctailViewModel>>(resultsJson);
                 }
             }
 
@@ -69,9 +76,9 @@ namespace ShopTARge23.Controllers
                 StrDrink = dto.StrDrink
             }).ToList() ?? new List<CoctailViewModel>();
 
-            // Serialiseerime tulemused JSON-iks ja salvestame TempData-sse
-            TempData["SearchCoctail"] = model.SearchCoctail;
-            TempData["Results"] = System.Text.Json.JsonSerializer.Serialize(model.Results);
+            // Salvestame Sessionisse
+            HttpContext.Session.SetString("SearchCoctail", model.SearchCoctail);
+            HttpContext.Session.SetString("Results", JsonSerializer.Serialize(model.Results));
 
             return View(model);
         }
