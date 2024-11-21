@@ -51,6 +51,7 @@ namespace ShopTARge23.Controllers
             vm.Pressure = dto.Pressure;
             vm.WindSpeed = dto.WindSpeed;
             vm.Description = dto.Description;
+            vm.CityImageUrl = dto.CityImageUrl;
 
             return View(vm);
 
