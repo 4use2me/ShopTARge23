@@ -55,7 +55,7 @@ namespace ShopTARge23.ApplicationServices.Services
                 }
                 else
                 {
-                    dto.CityImageUrl = "https://via.placeholder.com/300?text=No+Image+Available"; // Varupilt
+                    dto.CityImageUrl = dto.CityImageUrl = "/images/weather1.jpg";
                 }
 
             }
