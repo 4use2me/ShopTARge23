@@ -2,8 +2,6 @@
 using ShopTARge23.Core.Dto.FreeToPlayDtos;
 using ShopTARge23.Core.ServiceInterface;
 using ShopTARge23.Models.FreeToPlay;
-using ShopTARge23.Models.FreeToPlay;
-using System.Linq;
 
 namespace ShopTARge23.Controllers
 {
@@ -39,8 +37,6 @@ namespace ShopTARge23.Controllers
 				freetogame_profile_url = game.freetogame_profile_url
 			});
 
-
-
 			if (!string.IsNullOrEmpty(searchString))
 			{
 				vmList = vmList.Where(g => g.title.Contains(searchString, StringComparison.OrdinalIgnoreCase));
@@ -70,7 +66,6 @@ namespace ShopTARge23.Controllers
 
 			return View(vmList.ToList());
 		}
-
 
 		[HttpPost]
 		public IActionResult ShowFreeGames(IndexViewModel model)

@@ -38,7 +38,6 @@
             </div>
         </form>
 
-
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -100,8 +99,9 @@
                         <td>@freegames.platform</td>
                         <td>@freegames.release_date</td>
                         <td>
-                            <img src="@freegames.thumbnail" alt="@freegames.title Thumbnail" style="width: 100px; height: auto;" />
-                        </td>
+                            <a href="@freegames.game_url" target="_blank" title="Visit @freegames.title">
+                                <img src="@freegames.thumbnail" alt="@freegames.title Thumbnail" style="width: 100px; height: auto;" />
+                            </a>
                     </tr>
                     rownumber += 1;
                 }
