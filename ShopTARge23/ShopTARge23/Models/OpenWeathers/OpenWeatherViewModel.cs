@@ -30,5 +30,6 @@
         public int TimeZoneId { get; set; }
         public string Name { get; set; }
         public int Cod { get; set; }
+        public string CityImageUrl { get; set; }
     }
 }
