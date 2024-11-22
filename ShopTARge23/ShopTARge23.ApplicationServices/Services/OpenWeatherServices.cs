@@ -12,8 +12,8 @@ namespace ShopTARge23.ApplicationServices.Services
         public async Task<OpenWeatherResultDto> OpenWeatherResult(OpenWeatherResultDto dto)
         {
             string OpenWeatherApiKey = "20cba06d4e368dc5c4d4307cce23e7c4";
-			string pixabayApiKey = "47208038-bd9e1972a245230a0cad8c8af";
-			
+            string pixabayApiKey = "47208038-bd9e1972a245230a0cad8c8af";
+
             string weatherurl = $"https://api.openweathermap.org/data/2.5/weather?q={dto.City}&appid={OpenWeatherApiKey}&units=metric";
 
             //api call puhul peab andmed deserialiseerima
@@ -37,9 +37,9 @@ namespace ShopTARge23.ApplicationServices.Services
             string city = HttpUtility.UrlEncode(dto.City); // Kodeeri linnanimi
             string pixabayUrl = $"https://pixabay.com/api/?key={pixabayApiKey}&q={city}&image_type=photo&category=places";
 
-			// Teeme Pixabay päringu
-			using (WebClient client = new WebClient())
-			{
+            // Teeme Pixabay päringu
+            using (WebClient client = new WebClient())
+            {
                 string pixabayJson = client.DownloadString(pixabayUrl);
                 Console.WriteLine(pixabayJson); // Kontrolli vastust
 
@@ -61,6 +61,6 @@ namespace ShopTARge23.ApplicationServices.Services
             }
 
             return dto;
-		}
-	}
+        }
+    }
 }
