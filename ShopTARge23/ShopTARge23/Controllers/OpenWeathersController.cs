@@ -31,7 +31,7 @@ namespace ShopTARge23.Controllers
                 return RedirectToAction("City", "OpenWeathers", new { city = model.CityName });
             }
 
-            TempData["ErrorMessage"] = "Results not found.";
+            TempData["ErrorMessage"] = "No results found.";
             return RedirectToAction("Index");
         }
 
