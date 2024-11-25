@@ -5,13 +5,6 @@ using ShopTARge23.Core.Dto;
 using ShopTARge23.Core.ServiceInterface;
 using MailKit.Security;
 using MailKit.Net.Smtp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
-using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 
 namespace ShopTARge23.ApplicationServices.Services
 {
@@ -44,6 +37,7 @@ namespace ShopTARge23.ApplicationServices.Services
 			//(SecureSocketOptions.StartTls: 587 v SecureSocketOptions.SslOnConnect: 465)
 			smtp.Connect(_config.GetSection("EmailHost").Value, 
 				587, SecureSocketOptions.StartTls);
+
 			//autentida
 			smtp.Authenticate(
 				_config.GetSection("EmailUserName").Value, 
