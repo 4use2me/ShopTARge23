@@ -5,33 +5,45 @@ using ShopTARge23.Models.Emails;
 
 namespace ShopTARge23.Controllers
 {
-	public class EmailsController : Controller
-	{
-		private readonly IEmailServices _emailServices;
-		public EmailsController(IEmailServices emailServices)
-		{
-			_emailServices = emailServices;
-		}
-		public IActionResult Index()
-		{
-			return View();
-		}
+    public class EmailsController : Controller
+    {
+        private readonly IEmailServices _emailServices;
+        public EmailsController(IEmailServices emailServices)
+        {
+            _emailServices = emailServices;
+        }
+        public IActionResult Index()
+        {
+            return View();
+        }
 
-		//meetod teha
-		[HttpPost]
-		public IActionResult SendEmail(EmailViewModel vm)
-		{
-			var dto = new EmailDto()
-			{
-				To = vm.To,
-				Subject = vm.Subject,
-				Body = vm.Body,
-			};
+        //meetod teha
+        [HttpPost]
+        public IActionResult SendEmail(EmailViewModel vm)
+        {
+            var attachments = new List<EmailAttachmentDto>();
 
-			_emailServices.SendEmail(dto);
+            if (vm.Attachments != null && vm.Attachments.Any())
+            {
+                attachments = vm.Attachments.Select(file => new EmailAttachmentDto
+                {
+                    FileName = file.FileName,
+                    ContentType = file.ContentType,
+                    Content = file.OpenReadStream()
+                }).ToList();
+            }
 
-			return RedirectToAction(nameof(Index));
+            var dto = new EmailDto()
+            {
+                To = vm.To,
+                Subject = vm.Subject,
+                Body = vm.Body,
+                Attachments = attachments
+            };
 
-		}
-	}
+            _emailServices.SendEmail(dto);
+
+            return RedirectToAction(nameof(Index));
+        }
+    }
 }
