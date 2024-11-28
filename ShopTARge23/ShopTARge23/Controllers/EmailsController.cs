@@ -21,6 +21,13 @@ namespace ShopTARge23.Controllers
         [HttpPost]
         public IActionResult SendEmail(EmailViewModel vm)
         {
+            // Kontrollime e-posti formaati enne saatmist
+            if (!IsValidEmail(vm.To))
+            {
+                TempData["Message"] = "Invalid email address. Please check and try again.";
+                return RedirectToAction(nameof(Index));
+            }
+
             var attachments = new List<EmailAttachmentDto>();
 
             if (vm.Attachments != null && vm.Attachments.Any())
@@ -43,7 +50,27 @@ namespace ShopTARge23.Controllers
 
             _emailServices.SendEmail(dto);
 
+            TempData["Message"] = "The email was sent successfully.";
+
             return RedirectToAction(nameof(Index));
+        }
+        // E-posti aadressi valideerimise meetod
+        private bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return false;
+
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                // Kontrollime lisaks, et aadress sisaldab vähemalt üht punkti peale '@'
+                var parts = email.Split('@');
+                return addr.Address == email && parts.Length == 2 && parts[1].Contains('.');
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

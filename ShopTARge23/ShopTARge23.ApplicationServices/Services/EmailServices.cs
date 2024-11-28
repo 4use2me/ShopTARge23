@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MimeKit;
-using MimeKit.Text;
 using ShopTARge23.Core.Dto;
 using ShopTARge23.Core.ServiceInterface;
 using MailKit.Security;
@@ -28,7 +27,7 @@ namespace ShopTARge23.ApplicationServices.Services
             email.From.Add(MailboxAddress.Parse(_config.GetSection("EmailUserName").Value));
             email.To.Add(MailboxAddress.Parse(dto.To));
             email.Subject = dto.Subject;
-            
+
             // Loome e-kirja sisu
             var bodyBuilder = new BodyBuilder
             {
