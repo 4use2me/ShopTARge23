@@ -4,7 +4,6 @@ using ShopTARge23.Core.Dto;
 using ShopTARge23.Core.ServiceInterface;
 using ShopTARge23.Data;
 using ShopTARge23.Models.RealEstates;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ShopTARge23.Controllers
 {
@@ -49,12 +48,10 @@ namespace ShopTARge23.Controllers
         {
             RealEstateCreateUpdateViewModel result = new();
 
-
             return View("CreateUpdate", result);
         }
 
         [HttpPost]
-
         public async Task<IActionResult> Create(RealEstateCreateUpdateViewModel vm)
         {
             var dto = new RealEstateDto()
@@ -257,4 +254,3 @@ namespace ShopTARge23.Controllers
         }
     }
 }
-
