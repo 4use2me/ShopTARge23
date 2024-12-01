@@ -1,5 +1,20 @@
 ﻿@model ShopTARge23.Models.Coctails.SearchCoctailViewModel
 
+<style>
+    .results-container {
+        display: flex;
+        justify-content: space-between; /* Jagab tulemused ühtlaselt */
+        gap: 20px; /* Vahe tulemuste veergude vahel */
+    }
+
+    .results-column {
+        flex: 1; /* Veergude võrdne laius */
+        padding: 10px;
+        border: 1px solid #ddd; /* Lisab veerule eraldusjoone */
+        border-radius: 5px;
+    }
+</style>
+
 <!-- Main -->
 <div id="main" class="wrapper style1">
     <div class="container">
@@ -32,48 +47,50 @@
                 </div>
             </form>
 
-            <!-- Results by name -->
-            <div class="container">
-                @if (Model.Results != null && Model.Results.Count > 0)
-                {
-                    <h3>Results by name:</h3>
-                    <ul>
-                        @foreach (var coctail in Model.Results)
-                        {
-                            <li>
-                                <a href="@Url.Action("Details", "Coctails", new { idDrink = coctail.IdDrink, searchQuery = Model.SearchCoctail })">
-                                    @coctail.StrDrink
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                }
-                else if (string.IsNullOrEmpty(Model.SearchIngredient))
-                {
-                    <p>No results found for the entered cocktail name.</p>
-                }
-            </div>
+            <div class="container results-container">
+                <!-- Results by name -->
+                <div class="results-column">
+                    @if (Model.Results != null && Model.Results.Count > 0)
+                    {
+                        <h3>Results by name:</h3>
+                        <ul>
+                            @foreach (var coctail in Model.Results)
+                            {
+                                <li>
+                                    <a href="@Url.Action("Details", "Coctails", new { idDrink = coctail.IdDrink, searchQuery = Model.SearchCoctail })">
+                                        @coctail.StrDrink
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else 
+                    {
+                        <p>No results found for the entered cocktail name.</p>
+                    }
+                </div>
 
-            <!-- Results by ingredient -->
-            <div class="container">
-                @if (Model.IngredientResults != null && Model.IngredientResults.Count > 0)
-                {
-                    <h3>Results by ingredient:</h3>
-                    <ul>
-                        @foreach (var coctail in Model.IngredientResults)
-                        {
-                            <li>
-                                <a href="@Url.Action("Details", "Coctails", new { idDrink = coctail.IdDrink, searchQuery = Model.SearchIngredient })">
-                                    @coctail.StrDrink
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                }
-                else if (string.IsNullOrEmpty(Model.SearchCoctail))
-                {
-                    <p>No results found for the entered ingredient.</p>
-                }
+                <!-- Results by ingredient -->
+                <div class="results-column">
+                    @if (Model.IngredientResults != null && Model.IngredientResults.Count > 0)
+                    {
+                        <h3>Results by ingredient:</h3>
+                        <ul>
+                            @foreach (var coctail in Model.IngredientResults)
+                            {
+                                <li>
+                                    <a href="@Url.Action("Details", "Coctails", new { idDrink = coctail.IdDrink, searchQuery = Model.SearchIngredient })">
+                                        @coctail.StrDrink
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else 
+                    {
+                        <p>No results found for the entered ingredient.</p>
+                    }
+                </div>
             </div>
         </section>
     </div>
