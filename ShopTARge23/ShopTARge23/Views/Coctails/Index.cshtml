@@ -1,6 +1,5 @@
 ﻿@model ShopTARge23.Models.Coctails.SearchCoctailViewModel
 
-
 <!-- Main -->
 <div id="main" class="wrapper style1">
     <div class="container">
@@ -12,10 +11,17 @@
         <section id="content">
             <form asp-controller="Coctails" asp-action="Index" method="post">
                 <div class="container">
+                    <!-- Search by name -->
                     <div class="form-group col-md-offset-3 col-md-5">
                         <div scope="col">Coctail name</div>
                         <input asp-for="SearchCoctail" class="form-control" value="@Model.SearchCoctail" />
                         <span asp-validation-for="SearchCoctail" class="text-danger"></span>
+                    </div>
+                    <!-- Search by ingredient -->
+                    <div class="form-group col-md-offset-3 col-md-5">
+                        <div scope="col">Ingredient</div>
+                        <input asp-for="SearchIngredient" class="form-control" value="@Model.SearchIngredient" />
+                        <span asp-validation-for="SearchIngredient" class="text-danger"></span>
                     </div>
                 </div>
                 <br />
@@ -26,35 +32,52 @@
                 </div>
             </form>
 
-
-            <!-- Tulemused -->
+            <!-- Results by name -->
             <div class="container">
                 @if (Model.Results != null && Model.Results.Count > 0)
                 {
+                    <h3>Results by name:</h3>
                     <ul>
                         @foreach (var coctail in Model.Results)
                         {
                             <li>
-                                <!-- Link kokteili detailide lehele -->
                                 <a href="@Url.Action("Details", "Coctails", new { idDrink = coctail.IdDrink, searchQuery = Model.SearchCoctail })">
                                     @coctail.StrDrink
                                 </a>
-
                             </li>
                         }
                     </ul>
                 }
-                else
+                else if (string.IsNullOrEmpty(Model.SearchIngredient))
                 {
-                    <p>No results found.</p>
+                    <p>No results found for the entered cocktail name.</p>
+                }
+            </div>
+
+            <!-- Results by ingredient -->
+            <div class="container">
+                @if (Model.IngredientResults != null && Model.IngredientResults.Count > 0)
+                {
+                    <h3>Results by ingredient:</h3>
+                    <ul>
+                        @foreach (var coctail in Model.IngredientResults)
+                        {
+                            <li>
+                                <a href="@Url.Action("Details", "Coctails", new { idDrink = coctail.IdDrink, searchQuery = Model.SearchIngredient })">
+                                    @coctail.StrDrink
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                }
+                else if (string.IsNullOrEmpty(Model.SearchCoctail))
+                {
+                    <p>No results found for the entered ingredient.</p>
                 }
             </div>
         </section>
     </div>
 </div>
-
-
-    
 
 <!-- Scripts -->
 <script src="~/lib/jquery/dist/jquery.min.js"></script>

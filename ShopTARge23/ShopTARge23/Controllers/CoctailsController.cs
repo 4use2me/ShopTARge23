@@ -19,27 +19,38 @@ namespace ShopTARge23.Controllers
         {
             if (clearSession)
             {
-                // Tühjenda ainult siis, kui parameeter clearSession on true
                 HttpContext.Session.Remove("SearchCoctail");
                 HttpContext.Session.Remove("Results");
+                HttpContext.Session.Remove("SearchIngredient");
+                HttpContext.Session.Remove("IngredientResults");
             }
 
             var model = new SearchCoctailViewModel
             {
                 SearchCoctail = null,
-                Results = new List<CoctailViewModel>()
+                SearchIngredient = null,
+                Results = new List<CoctailViewModel>(),
+                IngredientResults = new List<CoctailViewModel>()
             };
 
-            // Kui Sessionis on andmed ja clearSession ei ole true
+            // If there is data in Session and clearSession is not true
             if (!clearSession)
             {
+                // Download the cocktail name and ingredient search results from the session
                 var searchCoctail = HttpContext.Session.GetString("SearchCoctail");
                 var resultsJson = HttpContext.Session.GetString("Results");
+                var searchIngredient = HttpContext.Session.GetString("SearchIngredient");
+                var ingredientResultsJson = HttpContext.Session.GetString("IngredientResults");
 
                 if (!string.IsNullOrEmpty(searchCoctail) && !string.IsNullOrEmpty(resultsJson))
                 {
                     model.SearchCoctail = searchCoctail;
                     model.Results = JsonSerializer.Deserialize<List<CoctailViewModel>>(resultsJson);
+                }
+                if (!string.IsNullOrEmpty(searchIngredient) && !string.IsNullOrEmpty(ingredientResultsJson))
+                {
+                    model.SearchIngredient = searchIngredient;
+                    model.IngredientResults = JsonSerializer.Deserialize<List<CoctailViewModel>>(ingredientResultsJson);
                 }
             }
 
@@ -49,41 +60,38 @@ namespace ShopTARge23.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(SearchCoctailViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (!string.IsNullOrEmpty(model.SearchCoctail))
             {
-                model.Results ??= new List<CoctailViewModel>();
-                return View(model);
+                var coctailsDto = await _coctailServices.GetCocktailsAsync(model.SearchCoctail);
+
+                model.Results = coctailsDto?.Select(dto => new CoctailViewModel
+                {
+                    IdDrink = dto.IdDrink,
+                    StrDrink = dto.StrDrink
+                }).ToList() ?? new List<CoctailViewModel>();
+
+                HttpContext.Session.SetString("SearchCoctail", model.SearchCoctail);
+                HttpContext.Session.SetString("Results", JsonSerializer.Serialize(model.Results));
             }
 
-            if (string.IsNullOrEmpty(model.SearchCoctail))
+            if (!string.IsNullOrEmpty(model.SearchIngredient))
             {
-                ModelState.AddModelError("", "Please enter a cocktail name to search.");
-                model.Results ??= new List<CoctailViewModel>();
-                return View(model);
+                var ingredientDto = await _coctailServices.GetCocktailsByIngredientAsync(model.SearchIngredient);
+
+                model.IngredientResults = ingredientDto?.Select(dto => new CoctailViewModel
+                {
+                    IdDrink = dto.IdDrink,
+                    StrDrink = dto.StrDrink
+                }).ToList() ?? new List<CoctailViewModel>();
+
+                HttpContext.Session.SetString("SearchIngredient", model.SearchIngredient);
+                HttpContext.Session.SetString("IngredientResults", JsonSerializer.Serialize(model.IngredientResults));
             }
-
-            // Otsime kokteile teenusest
-            var coctailsDto = await _coctailServices.GetCocktailsAsync(model.SearchCoctail);
-
-            if (coctailsDto == null || coctailsDto.Count == 0)
-            {
-                ModelState.AddModelError("", $"No results found for \"{model.SearchCoctail}\".");
-            }
-
-            model.Results = coctailsDto?.Select(dto => new CoctailViewModel
-            {
-                IdDrink = dto.IdDrink,
-                StrDrink = dto.StrDrink
-            }).ToList() ?? new List<CoctailViewModel>();
-
-            // Salvestame Sessionisse
-            HttpContext.Session.SetString("SearchCoctail", model.SearchCoctail);
-            HttpContext.Session.SetString("Results", JsonSerializer.Serialize(model.Results));
 
             return View(model);
         }
 
-        // Kokteili detailide kuvamine
+        // Displaying cocktail details
         [HttpGet]
         public async Task<IActionResult> Details(string idDrink, string searchQuery)
         {
@@ -99,7 +107,7 @@ namespace ShopTARge23.Controllers
                 return NotFound();
             }
 
-            // Konverteeri CoctailDetailDto CoctailViewModel-iks
+            // Convert CoctailDetailDto to CoctailViewModel
             var coctailViewModel = new CoctailViewModel
             {
                 IdDrink = coctailDetailDto.IdDrink,
@@ -122,11 +130,11 @@ namespace ShopTARge23.Controllers
                 StrIngredient13 = coctailDetailDto.StrIngredient13,
                 StrIngredient14 = coctailDetailDto.StrIngredient14,
                 StrIngredient15 = coctailDetailDto.StrIngredient15
-                // Täida kõik vajalikud atribuudid CoctailDetailDto-st CoctailViewModel-isse
+                // Fill in all the necessary attributes from CoctailDetailDto to CoctailViewModel
             };
 
-            // Edasta otsingupäring lingina
-            ViewData["SearchQuery"] = searchQuery; // Edasta otsinguväärtus
+            // Submit a search query as a link
+            ViewData["SearchQuery"] = searchQuery; // Submit search value
             return View("Coctail", coctailViewModel);
         }
     }

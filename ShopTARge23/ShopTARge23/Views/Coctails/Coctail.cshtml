@@ -16,7 +16,7 @@
             <div><h1>Ingredients</h1></div>
             <div>
                 @{
-                    // Koosta loend koostisosadest ja filtreeri välja tühjad väärtused
+                    // Make a list of ingredients and filter out blank values
                     var ingredients = new List<string>
                 {
                 Model.StrIngredient1,
@@ -36,7 +36,7 @@
                 Model.StrIngredient15
                 }.Where(ingredient => !string.IsNullOrEmpty(ingredient)).ToList();
 
-                    // Kuva koostisosad, eraldades need komadega
+                    // Show ingredients by separating them with commas
                     @string.Join(", ", ingredients)
                 }
             </div>

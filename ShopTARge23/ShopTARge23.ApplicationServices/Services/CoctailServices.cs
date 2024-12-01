@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System.Net;
 using ShopTARge23.Core.Dto.CoctailsDtos;
 using ShopTARge23.Core.ServiceInterface;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ShopTARge23.ApplicationServices.Services
 {
@@ -11,17 +10,17 @@ namespace ShopTARge23.ApplicationServices.Services
     {
         public async Task<List<CoctailSearchDto>> GetCocktailsAsync(string searchTerm)
         {
-            string apiKey = "1"; // API võti
+            string apiKey = "1"; // API key
             string apiCallUrl = $"https://www.thecocktaildb.com/api/json/v1/{apiKey}/search.php?s={searchTerm}";
-            using (WebClient client = new WebClient())
+            using (WebClient client = new())
             {
-                // Lae andmed API-st
+                // Download data from API
                 string json = client.DownloadString(apiCallUrl);
                 var coctailResult = JsonConvert.DeserializeObject<CoctailRootDto>(json);
 
                 List<CoctailSearchDto> result = new List<CoctailSearchDto>();
 
-                // Läbime kõik leitud kokteilid ja lisame need Listi
+                // We go through all the cocktails we find and add them to the List
                 if (coctailResult.Drinks != null)
                 {
                     foreach (var drink in coctailResult.Drinks)
@@ -40,19 +39,55 @@ namespace ShopTARge23.ApplicationServices.Services
                 return result;
             }
         }
+        public async Task<List<CoctailSearchDto>> GetCocktailsByIngredientAsync(string ingredient)
+        {
+            string apiKey = "1";
+            string apiCallUrl = $"https://www.thecocktaildb.com/api/json/v1/{apiKey}/filter.php?i={ingredient}";
+
+            using (WebClient client = new WebClient())
+            {
+                string json = client.DownloadString(apiCallUrl);
+
+                // Deserialize to JObject for dynamic handling
+                var coctailResult = JsonConvert.DeserializeObject<JObject>(json);
+                var drinksToken = coctailResult["drinks"];
+
+                List<CoctailSearchDto> result = new List<CoctailSearchDto>();
+
+                // Handle different possible types
+                if (drinksToken is JArray drinksArray)
+                {
+                    foreach (var drink in drinksArray)
+                    {
+                        CoctailSearchDto dto = new CoctailSearchDto
+                        {
+                            IdDrink = drink["idDrink"]?.ToString(),
+                            StrDrink = drink["strDrink"]?.ToString(),
+                            StrDrinkThumb = drink["strDrinkThumb"]?.ToString(),
+                        };
+                        result.Add(dto);
+                    }
+                }
+                else if (drinksToken is JValue drinksValue && drinksValue.ToString() == "no data found")
+                {
+                    // Handle "no data found" case (empty result list)
+                }
+
+                return result;
+            }
+        }
 
         public async Task<CoctailDetailDto> GetCoctailDetailsAsync(string idDrink)
         {
-            string apiKey = "1"; // API võti
+            string apiKey = "1"; // API key
             string apiCallUrl = $"https://www.thecocktaildb.com/api/json/v1/{apiKey}/lookup.php?i={idDrink}";
             using (WebClient client = new WebClient())
             {
-                // Lae andmed API-st
+                // Download data from API
                 string json = client.DownloadString(apiCallUrl);
 
                 var coctailResult = JsonConvert.DeserializeObject<CoctailRootDto>(json);
 
-                // Tagastame esimese kokteili detailid (tavaliselt on vaid üks kokteil vastuses)
                 if (coctailResult.Drinks != null && coctailResult.Drinks.Count > 0)
                 {
                     var drink = coctailResult.Drinks[0];
@@ -84,7 +119,7 @@ namespace ShopTARge23.ApplicationServices.Services
                         StrIngredient13 = drink.StrIngredient13,
                         StrIngredient14 = drink.StrIngredient14,
                         StrIngredient15 = drink.StrIngredient15,
-                        // Lisa muud vajalikud väljad...
+                        // Add other required fields...
                     };
 
                     return dto;
