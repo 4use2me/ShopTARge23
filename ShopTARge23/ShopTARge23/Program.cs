@@ -1,10 +1,10 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using ShopTARge23.ApplicationServices.Services;
+using ShopTARge23.Core.Domain;
 using ShopTARge23.Core.ServiceInterface;
 using ShopTARge23.Data;
-
-
 
 namespace ShopTARge23
 {
@@ -32,8 +32,21 @@ namespace ShopTARge23
 			builder.Services.AddDbContext<ShopTARge23Context>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+			builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+			{
+				options.SignIn.RequireConfirmedAccount = true;
+				options.Password.RequiredLength = 3;
 
-            var app = builder.Build();
+				options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
+				options.Lockout.MaxFailedAccessAttempts = 3;
+				options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+			})
+			.AddEntityFrameworkStores<ShopTARge23Context>()
+			.AddDefaultTokenProviders()
+			.AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("CustomEmailConfirmation")
+			.AddDefaultUI();
+
+			var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
