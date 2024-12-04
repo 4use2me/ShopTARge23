@@ -2305,14 +2305,16 @@ input, select, textarea {
 	input[type="radio"] {
 		-moz-appearance: none;
 		-webkit-appearance: none;
-		-ms-appearance: none;
 		appearance: none;
-		display: block;
+		display: inline-block;
 		float: left;
 		margin-right: -2em;
 		opacity: 0;
-		width: 1em;
 		z-index: -1;
+		border: 2px solid #ccc;
+		border-radius: 3px;
+		background: white;
+		cursor: pointer;
 	}
 
 		input[type="checkbox"] + label,
@@ -3851,7 +3853,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 			}
 
 			header.major {
-				margin: 0 0 2em 0;
+				margin: 0 0 2 0;
 			}
 
 		/* Goto Next */
