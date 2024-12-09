@@ -42,6 +42,7 @@
         <div class="form-container">
             <!-- Kohalik konto -->
             <form method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="ReturnUrl" />
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="form-group" style="text-align: center"><h3>Local account</h3></div>
                 <div class="form-group row">

@@ -37,6 +37,7 @@ namespace ShopTARge23.Controllers
 				var user = new ApplicationUser
 				{
 					UserName = vm.Email,
+					Name = vm.Name,
 					Email = vm.Email,
 					City = vm.City,
 				};
@@ -75,7 +76,10 @@ namespace ShopTARge23.Controllers
 		[AllowAnonymous]
 		public async Task<IActionResult> Login(string? returnUrl)
 		{
-			LoginViewModel vm = new()
+            // Kui returnUrl on tühi, suuna avalehele
+            returnUrl ??= Url.Content("~/");
+
+            LoginViewModel vm = new()
 			{
 				ReturnUrl = returnUrl,
 				ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
@@ -83,5 +87,56 @@ namespace ShopTARge23.Controllers
 
 			return View(vm);
 		}
-	}
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl)
+        {
+            returnUrl ??= Url.Content("~/");
+            model.ReturnUrl ??= returnUrl;
+
+            model.ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user != null && !user.EmailConfirmed && 
+					(await _userManager.CheckPasswordAsync(user, model.Password)))
+                {
+                    ModelState.AddModelError(string.Empty, "Email not confirmed yet");
+                    return View(model);
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, true);
+
+                if (result.Succeeded)
+                {
+                   if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+                   else
+                   {
+                        return RedirectToAction("Index", "Home");
+                   }
+                }
+               if (result.IsLockedOut)
+               {
+                   return View("AccountLocked");
+                }
+               ModelState.AddModelError("", "Invalid Login Attempt");
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            //siin tehakse logout
+            await _signInManager.SignOutAsync();
+            //returnib Home index vaate
+            return RedirectToAction("Index", "Home");
+        }
+    }
 }
+

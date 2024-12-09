@@ -1,70 +1,86 @@
-﻿<html>
+﻿@using ShopTARge23.Core.Domain
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<title>Landed by HTML5 UP</title>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-	<link rel="stylesheet" href="~/assets/css/main.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-	<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <title>ShopTARge23</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="~/assets/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 </head>
 <body class="is-preload landing">
-	<div id="page-wrapper">
+    <div id="page-wrapper">
 
-		<!-- Header -->
-		<header id="header">
-			<h1><a asp-area="" asp-controller="Home" asp-action="Index">ShopTARge23</a></h1>
-			<nav id="nav">
-				<ul>
-					<li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-					<li><a asp-controller="Spaceships" asp-action="Index">Spaceships</a></li>
-					<li><a asp-controller="Realestates" asp-action="Index">Real estate</a></li>
-					<li><a asp-controller="Kindergartens" asp-action="Index">Kindergartens</a></li>
-					<li><a asp-controller="AccuWeathers" asp-action="Index">Accu weather</a></li>
-					<li><a asp-controller="ChuckNorris" asp-action="Index">Chuck Norris</a></li>
-					<li><a asp-controller="FreeToPlay" asp-action="Index">Free games</a></li>
-					<li>
-						<a asp-controller="Coctails" asp-action="Index" asp-route-clearSession="true">Cocktails</a>
-					</li>
-					<li><a asp-controller="OpenWeathers" asp-action="Index">Open weather</a></li>
-					<li><a asp-controller="Emails" asp-action="Index">Email</a></li>
-					<li><a asp-controller="Accounts" asp-action="Register">Register</a></li>
-					<li><a asp-controller="Accounts" asp-action="Login">Login</a></li>
-				</ul>
-			</nav>
-		</header>
+        <!-- Header -->
+        <header id="header">
+            <h1><a asp-area="" asp-controller="Home" asp-action="Index">ShopTARge23</a></h1>
+            <nav id="nav">
+                <ul>
+                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var user = await UserManager.GetUserAsync(User);
+                        var name = user?.Name ?? "User";
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+                        <li><a asp-controller="Spaceships" asp-action="Index">Spaceships</a></li>
+                        <li><a asp-controller="Realestates" asp-action="Index">Real estate</a></li>
+                        <li><a asp-controller="Kindergartens" asp-action="Index">Kindergartens</a></li>
+                        <li><a asp-controller="AccuWeathers" asp-action="Index">Accu weather</a></li>
+                        <li><a asp-controller="ChuckNorris" asp-action="Index">Chuck Norris</a></li>
+                        <li><a asp-controller="FreeToPlay" asp-action="Index">Free games</a></li>
+                        <li><a asp-controller="Coctails" asp-action="Index" asp-route-clearSession="true">Cocktails</a></li>
+                        <li><a asp-controller="OpenWeathers" asp-action="Index">Open weather</a></li>
+                        <li><a asp-controller="Emails" asp-action="Index">Email</a></li>
+                        <li>
+                            <form asp-controller="Accounts" asp-action="Logout" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-primary">Logout @name</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li><a asp-controller="Accounts" asp-action="Register">Register</a></li>
+                        <li><a asp-controller="Accounts" asp-action="Login">Login</a></li>
+                    }
+                </ul>
+            </nav>
+        </header>
+
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer id="footer">
+            <ul class="icons">
+                <li><a href="#" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
+                <li><a href="#" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
+                <li><a href="#" class="icon brands alt fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
+                <li><a href="#" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
+                <li><a href="#" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
+                <li><a href="#" class="icon solid alt fa-envelope"><span class="label">Email</span></a></li>
+            </ul>
+            <ul class="copyright">
+                <li>&copy; 2024 - ShopTARge23 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></li>
+            </ul>
+        </footer>
     </div>
 
-		<!-- Footer -->
-		<footer id="footer">
-			<ul class="icons">
-				<li><a href="#" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
-				<li><a href="#" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
-				<li><a href="#" class="icon brands alt fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
-				<li><a href="#" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
-				<li><a href="#" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
-				<li><a href="#" class="icon solid alt fa-envelope"><span class="label">Email</span></a></li>
-			</ul>
-			<ul class="copyright">
-				<li>&copy; 2024 - ShopTARge23 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></li>
-			</ul>
-		</footer>
-
-	</div>
-
-	<!-- Scripts -->
-	<script src="~/assets/js/jquery.min.js"></script>
-	<script src="~/assets/js/jquery.scrolly.min.js"></script>
-	<script src="~/assets/js/jquery.dropotron.min.js"></script>
-	<script src="~/assets/js/browser.min.js"></script>
-	<script src="~/assets/js/jquery.scrollex.min.js"></script>
-	<script src="~/assets/js/breakpoints.min.js"></script>
-	<script src="~/assets/js/util.js"></script>
-	<script src="~/assets/js/main.js"></script>
+    <!-- Scripts -->
+    <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/js/jquery.scrolly.min.js"></script>
+    <script src="~/assets/js/jquery.dropotron.min.js"></script>
+    <script src="~/assets/js/browser.min.js"></script>
+    <script src="~/assets/js/jquery.scrollex.min.js"></script>
+    <script src="~/assets/js/breakpoints.min.js"></script>
+    <script src="~/assets/js/util.js"></script>
+    <script src="~/assets/js/main.js"></script>
 
 </body>
 </html>
