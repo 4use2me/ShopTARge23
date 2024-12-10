@@ -35,16 +35,26 @@
                         <li><a asp-controller="Coctails" asp-action="Index" asp-route-clearSession="true">Cocktails</a></li>
                         <li><a asp-controller="OpenWeathers" asp-action="Index">Open weather</a></li>
                         <li><a asp-controller="Emails" asp-action="Index">Email</a></li>
-                        <li>
-                            <form asp-controller="Accounts" asp-action="Logout" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-primary">Logout @name</button>
-                            </form>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Account manager <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <form asp-controller="Accounts" asp-action="ChangePassword" method="post" style="display:inline;">
+                                        <button type="submit" class="btn btn-link">Change password</button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <form asp-controller="Accounts" asp-action="Logout" method="post" style="display:inline;">
+                                        <button type="submit" class="btn btn-link">Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
                         </li>
                     }
                     else
                     {
-                        <li><a asp-controller="Accounts" asp-action="Register">Register</a></li>
-                        <li><a asp-controller="Accounts" asp-action="Login">Login</a></li>
+                        <li class="auth-link"><a asp-controller="Accounts" asp-action="Register">Register</a></li>
+                        <li class="auth-link"><a asp-controller="Accounts" asp-action="Login">Login</a></li>
                     }
                 </ul>
             </nav>

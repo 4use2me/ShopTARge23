@@ -2193,6 +2193,10 @@ input, select, textarea {
 		text-align: center;
 	}
 
+		header.major h2 {
+			margin-bottom: 0; /* Vähenenud vahe h2 ja alljoone vahel */
+		}
+
 		header.major:after {
 			background: #e44c65;
 			content: '';
@@ -3428,42 +3432,45 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 		padding-top: 3.5em;
 	}
 
-	#header {
-		background: rgba(39, 40, 51, 0.965);
-		box-shadow: 0 0 0.25em 0 rgba(0, 0, 0, 0.25);
-		cursor: default;
-		height: 3.5em;
-		left: 0;
-		line-height: 3.5em;
-		position: fixed;
-		top: 0;
-		width: 100%;
-		z-index: 100;
+#header {
+	background: rgba(39, 40, 51, 0.965);
+	box-shadow: 0 0 0.25em 0 rgba(0, 0, 0, 0.25);
+	cursor: default;
+	height: 1.5em;
+	margin-left: 1em;
+	line-height: 2.5em;
+	width: 100%;
+	z-index: 100;
+	display: flex;
+	flex-direction: column;
+}
+
+	#header h1 {
+		display: inline-block;
+		margin: 0;
 	}
 
-		#header h1 {
-			height: inherit;
-			left: 1.25em;
-			line-height: inherit;
-			margin: 0;
-			position: absolute;
-			top: 0;
-		}
+	#header nav {
+		
+		position: static;
+	}
 
-		#header nav {
-			position: absolute;
-			right: 1em;
-			top: 0;
+		#header nav ul {
+			margin: 0
 		}
-
-			#header nav ul {
-				margin: 0;
-			}
 
 				#header nav ul li {
-					display: inline-block;
 					margin-left: 1em;
+					display: inline-block;
 				}
+
+					#header nav ul li.auth-link {
+						margin-left: 65em; /* Liigub paremale */
+					}
+
+						#header nav ul li.auth-link + li.auth-link {
+							margin-left: 1em; /* Väike vahe Register ja Login vahel */
+						}
 
 					#header nav ul li a, #header nav ul li span {
 						border: 0;
@@ -3888,7 +3895,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 		/* Header */
 
 			#header {
-				display: none;
+				display: flex;
+				flex-direction: column;
 			}
 
 		/* Banner */

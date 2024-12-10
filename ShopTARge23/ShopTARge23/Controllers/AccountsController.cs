@@ -129,6 +129,32 @@ namespace ShopTARge23.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+
+            if (userId == null || token == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            var user = await _userManager.FindByNameAsync(userId);
+            if (user == null)
+            {
+                ViewBag.ErrorMEssage = $"The User ID {userId} is not valid";
+                return View("NotFound");
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                return View();
+            }
+            ViewBag.ErrorTitle = "Email cannot be confirmed";
+            return View("Error");
+
+        }
+
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
@@ -136,6 +162,69 @@ namespace ShopTARge23.Controllers
             await _signInManager.SignOutAsync();
             //returnib Home index vaate
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user != null && await _userManager.IsEmailConfirmedAsync(user))
+                {
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var passwordResetLink = Url.Action("ResetPassword", "Accounts", new { email = model.Email, token = token }, Request.Scheme);
+
+                    // _logger.Log(LogLevel.Warning, passwordResetLink);
+
+                    return View("ForgotPasswordConfirmation");
+                }
+                return View("ForgotPasswordConfirmation");
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return RedirectToAction("Login");
+                }
+
+                var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View();
+                }
+
+                await _signInManager.RefreshSignInAsync(user);
+                return View("ChangePasswordConfirmation");
+            }
+
+            return View(model);
+
         }
     }
 }
