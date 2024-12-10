@@ -28,6 +28,7 @@ namespace ShopTARge23
             builder.Services.AddScoped<ICoctailServices, CoctailServices>();
 			builder.Services.AddScoped<IOpenWeatherServices, OpenWeatherServices>();
 			builder.Services.AddScoped<IEmailServices, EmailServices>();
+
             builder.Services.AddSignalR();
 
             builder.Services.AddDbContext<ShopTARge23Context>(options =>

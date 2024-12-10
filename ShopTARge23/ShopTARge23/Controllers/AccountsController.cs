@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ShopTARge23.ApplicationServices.Services;
 using ShopTARge23.Core.Domain;
+using ShopTARge23.Core.Dto;
+using ShopTARge23.Core.ServiceInterface;
 using ShopTARge23.Models.Accounts;
 
 namespace ShopTARge23.Controllers
@@ -10,17 +13,19 @@ namespace ShopTARge23.Controllers
 	{
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IEmailServices _emailServices;
 
-		public AccountsController
+        public AccountsController
 			(
 				UserManager<ApplicationUser> userManager,
-				SignInManager<ApplicationUser> signInManager
-			)
+				SignInManager<ApplicationUser> signInManager,
+                IEmailServices emailServices
+            )
 		{
 			_userManager = userManager;
 			_signInManager = signInManager;
-		}
-
+            _emailServices = emailServices;
+        }
 
 		[HttpGet]
 		public IActionResult Register()
@@ -48,10 +53,19 @@ namespace ShopTARge23.Controllers
 				{
 					var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-					var confirmationLink = Url.Action("ConfirmEmail", "Accounts", new { userId = user.Id, token = token }, Request.Scheme);
+					var confirmationLink = Url.Action("ConfirmEmail", "Accounts", 
+                        new { userId = user.Id, token }, Request.Scheme);
 
+                    var emailDto = new EmailDto
+                    {
+                        To = vm.Email,
+                        Subject = "Confirm your email",
+                        Body = $"Please confirm your email by clicking <a href='{confirmationLink}'>here</a>."
+                    };
 
-					if (_signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                    _emailServices.SendEmail(emailDto);
+
+                    if (_signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
 					{
 						return RedirectToAction("ListUsers", "Administrations");
 					}
@@ -138,17 +152,17 @@ namespace ShopTARge23.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            var user = await _userManager.FindByNameAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
                 ViewBag.ErrorMEssage = $"The User ID {userId} is not valid";
-                return View("NotFound");
+                return View("Index", "Home");
             }
 
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
             {
-                return View();
+                return View("ConfirmEmail");
             }
             ViewBag.ErrorTitle = "Email cannot be confirmed";
             return View("Error");
